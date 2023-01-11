@@ -3,20 +3,12 @@ import Link from 'next/link'
 import React from 'react'
 import {faMoon} from '@fortawesome/free-regular-svg-icons'
 import {faSun} from '@fortawesome/free-solid-svg-icons'
+import {useTheme} from '../contexts/theme'
 
-const NavBar = () => {
+const NavBar: React.FC = () => {
+  const {setTheme} = useTheme()
   const changeMode = (mode: string) => {
-    localStorage.theme = mode
-
-    if (
-      localStorage.theme === 'dark' ||
-      (!('theme' in localStorage) &&
-        window.matchMedia('(prefers-color-scheme: dark)').matches)
-    ) {
-      document.documentElement.classList.add('dark')
-    } else {
-      document.documentElement.classList.remove('dark')
-    }
+    setTheme(mode)
   }
 
   return (
