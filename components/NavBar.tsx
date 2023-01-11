@@ -26,7 +26,7 @@ const NavBar = () => {
     items-center dark:bg-slate-800 dark:text-white dark:shadow-transparent dark:border-slate-800 dark:border-b-2 duration-200"
     >
       <Link href={'/'} className="tracking-widest font-semibold text-lg">
-        RETROSPECTIVE APP
+        RETROSPECTIVE APP 🦁
       </Link>
       <div className="flex gap-2 justify-between">
         <button
