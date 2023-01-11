@@ -9,6 +9,7 @@ module.exports = {
     extend: {
       fontFamily: {
         'sanam-deklen': ['var(--font-sanam-deklen)'],
+        'five-yearsold': ['var(--font-five-yearsold)'],
       },
     },
   },

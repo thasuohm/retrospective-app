@@ -3,13 +3,8 @@ import type {AppProps} from 'next/app'
 import {config} from '@fortawesome/fontawesome-svg-core'
 import '@fortawesome/fontawesome-svg-core/styles.css'
 import Script from 'next/script'
-import localFont from '@next/font/local'
+import {fiveYearsOldFont} from '../config/fonts'
 config.autoAddCss = false
-
-const sanamDeklen = localFont({
-  src: '../public/fonts/SanamDeklen_chaya/SanamDeklen_chaya.ttf',
-  variable: '--font-sanam-deklen',
-})
 
 export default function App({Component, pageProps}: AppProps) {
   return (
@@ -29,7 +24,7 @@ export default function App({Component, pageProps}: AppProps) {
         `}
       </Script>
       <main
-        className={`dark:bg-slate-900 h-screen duration-200  ${sanamDeklen.variable} font-sanam-deklen`}
+        className={`dark:bg-slate-900 h-screen duration-200 ${fiveYearsOldFont.variable} font-five-yearsold`}
       >
         <Component {...pageProps} />
       </main>
