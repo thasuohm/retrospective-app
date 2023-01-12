@@ -1,4 +1,4 @@
-import { ReactNode } from "react"
+import {ReactNode} from 'react'
 
 interface InputOnChange {
   (value: string): void
@@ -19,4 +19,9 @@ export interface ButtonProps {
   style: 'primary' | 'secondary'
   size: string
   isDisabled: boolean | undefined
+}
+
+export interface ReactSelectState {
+  value: string
+  label: string
 }
