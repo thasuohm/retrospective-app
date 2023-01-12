@@ -7,19 +7,28 @@ const Button: React.FC<ButtonProps> = (props) => {
   const styleSwitch = () => {
     switch (style) {
       case 'primary':
-        return 'p-2 bg-slate-800 text-white rounded-lg'
+        return 'bg-slate-800 text-white'
 
       case 'secondary':
-        return 'p-2 bg-slate-100 text-slate-700 rounded-lg '
+        return 'bg-slate-100 text-slate-700'
+      default:
+        return 'bg-slate-800 text-white'
     }
   }
 
-  const primaryStyle = ''
+  const sizeSwitch = () => {
+    switch (size) {
+      case 'sm':
+        return 'p-1 rounded-md text-sm'
+      default:
+        return 'p-2 rounded-lg'
+    }
+  }
 
   return (
     <button
       type={type}
-      className={`${styleSwitch()} ${size} hover:opacity-80`}
+      className={`${styleSwitch()} ${sizeSwitch()} hover:opacity-80`}
       disabled={isDisabled}
     >
       {children}

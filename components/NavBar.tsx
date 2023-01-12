@@ -18,7 +18,7 @@ const NavBar: React.FC = () => {
     >
       <div className="flex gap-2 md:gap-8 justify-between duration-200 items-center">
         <Link
-          href={'/retro-list'}
+          href={'/'}
           className="tracking-widest font-semibold text-lg hover:opacity-90"
         >
           RETROSPECTIVE
@@ -43,6 +43,7 @@ const NavBar: React.FC = () => {
         ) : (
           <button
             title="dark-mode-switch"
+            className="p-1 rounded-full shrink-0 w-8 h-8 hover:opacity-90"
             type="button"
             onClick={() => changeMode('dark')}
           >

@@ -1,8 +1,7 @@
 import React from 'react'
-import NavBar from '../components/NavBar'
 
-const FormPage = () => {
+const CreateRetroPage = () => {
   return <></>
 }
 
-export default FormPage
+export default CreateRetroPage

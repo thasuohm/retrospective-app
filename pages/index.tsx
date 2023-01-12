@@ -1,4 +1,4 @@
-import {useEffect, useState} from 'react'
+import {useState} from 'react'
 import Button from '../components/Button'
 import Select from 'react-select'
 import {ReactSelectState} from '../types/components'
@@ -23,22 +23,31 @@ export default function Home() {
     },
   ]
 
+  const searchRetroList = () => {
+    console.log(selectedTeam)
+  }
+
   return (
-    <main className="flex flex-col gap-8 max-w-3xl justify-center mx-auto h-screen px-3 lg:px-0">
+    <main className="flex flex-col gap-4 max-w-3xl justify-center mx-auto h-screen px-3 lg:px-0">
+      <h1 className="font-semibold font-sanam-deklen tracking-widest text-2xl text-center dark:text-white">
+        เลือกทีมของคุณ
+      </h1>
+
       <Select
         defaultValue={selectedTeam}
         onChange={setSelectedTeam}
         options={teamList}
+        instanceId="team-select"
       />
 
       <Button
         type="button"
         style="primary"
         size="sm"
-        onClick={() => {}}
+        onClick={searchRetroList}
         isDisabled={false}
       >
-        <b className="font-semibold font-sanam-deklen tracking-widest text-2xl  px-12  ">
+        <b className="font-semibold font-sanam-deklen tracking-widest text-2xl px-12">
           ค้นหา
         </b>
       </Button>
