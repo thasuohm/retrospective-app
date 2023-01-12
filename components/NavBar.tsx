@@ -41,7 +41,11 @@ const NavBar: React.FC = () => {
             <FontAwesomeIcon icon={faSun} />
           </button>
         ) : (
-          <button title="dark-mode-switch" type="button">
+          <button
+            title="dark-mode-switch"
+            type="button"
+            onClick={() => changeMode('dark')}
+          >
             <FontAwesomeIcon icon={faMoon} />
           </button>
         )}
