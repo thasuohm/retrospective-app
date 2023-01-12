@@ -13,11 +13,11 @@ const ThemeContext = createContext<
 })
 
 export const ThemeProvider = (props: any) => {
-  const [theme, setTheme] = useState<string | null>(null)
+  const [theme, setTheme] = useState<string>('')
 
   useEffect(() => {
     setTheme(theme)
-    if (theme) {
+    if (theme !== '') {
       localStorage.theme = theme
     }
 
