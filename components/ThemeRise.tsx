@@ -3,7 +3,6 @@ import React from 'react'
 import {useTheme} from '../contexts/theme'
 import sunImg from '../public/images/sun.gif'
 import moonImg from '../public/images/moon.gif'
-import cloudImg from '../public/images/cloud.png'
 
 import {useSpring, animated} from '@react-spring/web'
 
