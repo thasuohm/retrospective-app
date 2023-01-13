@@ -9,16 +9,21 @@ const ThemeContext = createContext<
   AppContextInterface | {theme: ''; setTheme: (state: string) => {}}
 >({
   theme: '',
-  setTheme: (state) => {},
+  setTheme: () => {},
 })
 
 export const ThemeProvider = (props: any) => {
   const [theme, setTheme] = useState<string>('')
 
   useEffect(() => {
-    setTheme(theme)
-    if (theme !== '') {
+    if (localStorage.theme !== '' && theme !== '') {
       localStorage.theme = theme
+      setTheme(theme)
+    } else if (localStorage.theme !== '' && theme === '') {
+      setTheme(localStorage.theme)
+    } else {
+      localStorage.theme = 'light'
+      setTheme('light')
     }
 
     if (
