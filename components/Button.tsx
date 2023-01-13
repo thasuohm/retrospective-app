@@ -28,7 +28,7 @@ const Button: React.FC<ButtonProps> = (props) => {
   return (
     <button
       type={type}
-      className={`${styleSwitch()} ${sizeSwitch()} hover:opacity-80`}
+      className={`${styleSwitch()} ${sizeSwitch()} hover:opacity-80 duration-150`}
       disabled={isDisabled}
     >
       {children}

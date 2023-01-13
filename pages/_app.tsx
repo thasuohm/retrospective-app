@@ -12,7 +12,7 @@ export default function App({Component, pageProps}: AppProps) {
     <>
       <ThemeProvider>
         <main
-          className={`dark:bg-slate-900 h-screen duration-200 ${fiveYearsOldFont.variable} ${sanamDeklen.variable} font-five-yearsold`}
+          className={`bg-white dark:bg-slate-900 h-screen duration-200 ${fiveYearsOldFont.variable} ${sanamDeklen.variable} font-five-yearsold`}
         >
           <DefaultLayout>
             <Component {...pageProps} />
