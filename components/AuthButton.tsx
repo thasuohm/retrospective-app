@@ -10,8 +10,7 @@ const AuthButton = () => {
         title="logout"
         className="hover:opacity-70 font-semibold"
         type="button"
-        onClick={(e) => {
-          e.preventDefault()
+        onClick={() => {
           signOut()
         }}
       >
@@ -24,8 +23,7 @@ const AuthButton = () => {
         title="login"
         className="hover:opacity-70 font-semibold"
         type="button"
-        onClick={(e) => {
-          e.preventDefault()
+        onClick={() => {
           signIn('google')
         }}
       >
