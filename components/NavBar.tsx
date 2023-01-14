@@ -4,6 +4,7 @@ import React from 'react'
 import {faMoon} from '@fortawesome/free-regular-svg-icons'
 import {faSun} from '@fortawesome/free-solid-svg-icons'
 import {useTheme} from '../contexts/theme'
+import AuthButton from './AuthButton'
 
 const NavBar: React.FC = () => {
   const {theme, setTheme} = useTheme()
@@ -51,13 +52,7 @@ const NavBar: React.FC = () => {
           </button>
         )}
 
-        <button
-          title="login"
-          className="hover:opacity-70 font-semibold"
-          type="button"
-        >
-          Login
-        </button>
+        <AuthButton />
       </div>
     </nav>
   )
