@@ -3,7 +3,6 @@ import Button from '../components/Button'
 import Select from 'react-select'
 import {ReactSelectState} from '../types/components'
 import {toast} from 'react-toastify'
-import axios from 'axios'
 import useTeamList from '../api/query/useTeamList'
 import {Team} from '../types/team'
 import Head from 'next/head'
@@ -13,28 +12,13 @@ export default function Home() {
     null
   )
 
-  const {data} = useTeamList()
-
-  const teamList = [
-    {
-      value: 'dev',
-      label: 'Developer',
-    },
-    {
-      value: 'design',
-      label: 'Designer',
-    },
-    {
-      value: 'tester',
-      label: 'Tester',
-    },
-  ]
+  const {data: teams} = useTeamList()
 
   const teamListOption = useMemo(() => {
-    return data?.data.map((item: Team) => {
+    return teams?.data.map((item: Team) => {
       return {value: item.code, label: item.name}
     })
-  }, [data])
+  }, [teams])
 
   const searchRetroList = () => {
     if (selectedTeam === null) {
