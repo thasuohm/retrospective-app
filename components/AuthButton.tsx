@@ -10,7 +10,10 @@ const AuthButton = () => {
         title="logout"
         className="hover:opacity-70 font-semibold"
         type="button"
-        onClick={() => signOut()}
+        onClick={(e) => {
+          e.preventDefault()
+          signOut()
+        }}
       >
         Logout
       </button>
@@ -21,7 +24,10 @@ const AuthButton = () => {
         title="login"
         className="hover:opacity-70 font-semibold"
         type="button"
-        onClick={() => signIn('google')}
+        onClick={(e) => {
+          e.preventDefault()
+          signIn('google')
+        }}
       >
         Login
       </button>
