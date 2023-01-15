@@ -24,7 +24,7 @@ const RetroBoardCard = () => {
           isDisabled={false}
           customStyle="w-full font-semibold"
         >
-          Let's write !!
+          Let&apos;s write !!
         </Button>
       </main>
     </div>
