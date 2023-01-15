@@ -19,7 +19,7 @@ export interface ButtonProps {
   style: 'primary' | 'secondary'
   size: string
   isDisabled: boolean | undefined
-  customStyle: string
+  customStyle?: string
 }
 
 export interface ReactSelectState {
