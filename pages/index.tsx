@@ -6,6 +6,7 @@ import {toast} from 'react-toastify'
 import useTeamList from '../api/query/useTeamList'
 import {Team} from '../types/team'
 import Head from 'next/head'
+import {useRouter} from 'next/router'
 
 export default function Home() {
   const [selectedTeam, setSelectedTeam] = useState<ReactSelectState | null>(
@@ -13,6 +14,7 @@ export default function Home() {
   )
 
   const {data: teams} = useTeamList()
+  const router = useRouter()
 
   const teamListOption = useMemo(() => {
     return teams?.data.map((item: Team) => {
@@ -27,9 +29,7 @@ export default function Home() {
       })
     }
 
-    toast.success('Wait for update~', {
-      position: toast.POSITION.TOP_CENTER,
-    })
+    router.push({pathname: '/retro-list/' + selectedTeam.value})
   }
 
   return (
@@ -37,7 +37,7 @@ export default function Home() {
       <Head>
         <title>Choose your team - Retro Creator</title>
       </Head>
-      <main className="flex flex-col gap-4 max-w-3xl justify-center mx-auto h-screen px-3 lg:px-0 ">
+      <main className="flex flex-col gap-4 max-w-3xl justify-center mx-auto h-screen px-3 lg:px-0">
         <div className="p-4 flex flex-col gap-4 justify-center rounded-lg">
           <h1 className="font-semibold font-sanam-deklen tracking-widest text-2xl text-center dark:text-white">
             Choose your Team

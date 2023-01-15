@@ -7,7 +7,6 @@ import {ThemeProvider} from '../contexts/theme'
 import DefaultLayout from '../components/layouts/DefaultLayout'
 import {ToastContainer} from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css'
-import Footer from '../components/Footer'
 config.autoAddCss = false
 import {QueryClient, QueryClientProvider} from 'react-query'
 import AuthProvider from '../components/AuthProvider'
@@ -23,12 +22,11 @@ export default function App({Component, pageProps}: AppProps) {
             bodyClassName={`${fiveYearsOldFont.variable} font-five-yearsold font-semibold`}
           />
           <main
-            className={`bg-white dark:bg-slate-900 h-screen duration-200 ${fiveYearsOldFont.variable} ${sanamDeklen.variable} font-five-yearsold`}
+            className={`duration-200 ${fiveYearsOldFont.variable} ${sanamDeklen.variable} font-five-yearsold `}
           >
             <DefaultLayout>
               <Component {...pageProps} />
             </DefaultLayout>
-            <Footer />
           </main>
         </ThemeProvider>
       </QueryClientProvider>

@@ -3,6 +3,11 @@ import axios from './axios'
 const getTeamList = () => {
   return axios.get('/team-list')
 }
+
+const getTeam = (code: string) => {
+  return axios.get('/team-list/getbycode?team=' + code)
+}
+
 const getRetroList = () => {}
 const createRetrospective = () => {}
 const updateRetrospective = () => {}
@@ -15,6 +20,7 @@ const emojiRetrospective = () => {}
 
 const retrospectiveService = {
   getTeamList,
+  getTeam,
   getRetroList,
   createRetrospective,
   updateRetrospective,
