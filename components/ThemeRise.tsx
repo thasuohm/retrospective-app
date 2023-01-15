@@ -32,11 +32,11 @@ const ThemeRise = () => {
       <div className="absolute top-24 left-8 md:left-24  translate-x-0 duration-200">
         {isDark() ? (
           <animated.div style={moonRise} className="w-28 md:w-56 duration-200">
-            <Image src={moonImg} alt="moon rise" />
+            <Image src={moonImg} alt="moon rise" priority />
           </animated.div>
         ) : (
           <animated.div style={sunRise} className="w-32 md:w-60 duration-200">
-            <Image src={sunImg} alt="sun rise" />
+            <Image src={sunImg} alt="sun rise" priority />
           </animated.div>
         )}
       </div>
