@@ -1,4 +1,3 @@
-import React from 'react'
 import {DefaultLayout} from '../../types/layouts'
 import Footer from '../Footer'
 import NavBar from '../NavBar'

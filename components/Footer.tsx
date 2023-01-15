@@ -1,5 +1,3 @@
-import React from 'react'
-
 const Footer: React.FC = () => {
   return (
     <div className="bg-slate-100 text-slate-800 text-center">

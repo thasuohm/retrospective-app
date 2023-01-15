@@ -1,6 +1,5 @@
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome'
 import Link from 'next/link'
-import React from 'react'
 import {faMoon} from '@fortawesome/free-regular-svg-icons'
 import {faSun} from '@fortawesome/free-solid-svg-icons'
 import {useTheme} from '../contexts/theme'

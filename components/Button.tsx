@@ -1,8 +1,7 @@
-import React from 'react'
 import {ButtonProps} from '../types/components'
 
 const Button: React.FC<ButtonProps> = (props) => {
-  const {type, style, children, size, isDisabled, onClick} = props
+  const {type, style, children, size, isDisabled, onClick, customStyle} = props
 
   const styleSwitch = () => {
     switch (style) {
@@ -28,7 +27,7 @@ const Button: React.FC<ButtonProps> = (props) => {
   return (
     <button
       type={type}
-      className={`${styleSwitch()} ${sizeSwitch()} hover:opacity-80 duration-150`}
+      className={`${styleSwitch()} ${sizeSwitch()} ${customStyle} hover:opacity-80 duration-150`}
       disabled={isDisabled}
       onClick={onClick}
     >

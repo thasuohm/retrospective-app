@@ -1,5 +1,4 @@
 import Image from 'next/image'
-import React from 'react'
 import {useTheme} from '../contexts/theme'
 import sunImg from '../public/images/sun.gif'
 import moonImg from '../public/images/moon.gif'
