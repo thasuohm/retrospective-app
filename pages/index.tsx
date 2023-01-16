@@ -17,7 +17,7 @@ export default function Home() {
   const router = useRouter()
 
   const teamListOption = useMemo(() => {
-    return teams?.data.map((item: Team) => {
+    return teams?.map((item: Team) => {
       return {value: item.code, label: item.name}
     })
   }, [teams])
