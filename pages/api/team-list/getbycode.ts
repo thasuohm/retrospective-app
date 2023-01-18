@@ -1,7 +1,7 @@
 // Next.js API route support: https://nextjs.org/docs/api-routes/introduction
 import type {NextApiRequest, NextApiResponse} from 'next'
 import {Team as TeamType} from '../../../types/team'
-import prisma from '../../../lib/prisma'
+import prisma from '../../../prisma'
 
 export default async function handler(
   req: NextApiRequest,

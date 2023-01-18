@@ -1,5 +1,5 @@
 import type {NextApiRequest, NextApiResponse} from 'next'
-import prisma from '../../../lib/prisma'
+import prisma from '../../../prisma'
 
 export default async function addTeam(
   req: NextApiRequest,
