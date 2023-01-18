@@ -8,7 +8,7 @@ const DefaultLayout: React.FC<DefaultLayout> = ({children}) => {
     <>
       <NavBar />
       <ThemeRise />
-      <section className="max-w-5xl w-full mx-auto relative mb-8">
+      <section className="max-w-5xl w-full mx-auto relative h-screen mb-8">
         {children}
       </section>
       <Footer />
