@@ -5,7 +5,7 @@ const getTeamList = () => {
 }
 
 const getTeam = (code: string) => {
-  return axios.get('/team-list/getbycode?team=' + code)
+  return axios.get('/team-list/getbycode?code=' + code)
 }
 
 const getRetroList = () => {}

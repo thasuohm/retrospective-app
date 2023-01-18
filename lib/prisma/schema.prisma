@@ -1,0 +1,104 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mongodb"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  MEMBER
+  LEADER
+  ADMIN
+}
+
+enum AccountStatus {
+  ACTIVE
+  BANNED
+}
+
+enum BoardType {
+  GOOD
+  BAD
+  TRY
+}
+
+model Team {
+  id          String       @id @default(auto()) @map("_id") @db.ObjectId
+  code        String       @unique
+  name        String
+  description String
+  User        User[]
+  RetroBoard  RetroBoard[]
+}
+
+model User {
+  id           String         @id @default(auto()) @map("_id") @db.ObjectId
+  email        String         @unique
+  name         String
+  team         Team           @relation(fields: [teamId], references: [id])
+  teamId       String         @db.ObjectId
+  role         Role
+  status       AccountStatus
+  createdAt    DateTime       @default(now())
+  RetroBoard   RetroBoard[]
+  RetroItem    RetroItem[]
+  RetroComment RetroComment[]
+  RetroEmoji   RetroEmoji[]
+}
+
+model RetroBoard {
+  id           String         @id @default(auto()) @map("_id") @db.ObjectId
+  creator      User           @relation(fields: [creatorId], references: [id])
+  creatorId    String         @db.ObjectId
+  title        String
+  team         Team           @relation(fields: [teamId], references: [id])
+  teamId       String         @db.ObjectId
+  password     String
+  endDate      DateTime?
+  opening      Boolean
+  anonymous    Boolean        @default(true)
+  createdAt    DateTime       @default(now())
+  updatedAt    DateTime       @updatedAt
+  RetroItem    RetroItem[]
+  RetroComment RetroComment[]
+}
+
+model RetroItem {
+  id         String       @id @default(auto()) @map("_id") @db.ObjectId
+  sender     User         @relation(fields: [senderId], references: [id])
+  senderId   String       @db.ObjectId
+  board      RetroBoard   @relation(fields: [boardId], references: [id])
+  boardId    String       @db.ObjectId
+  type       BoardType
+  pickup     Boolean      @default(false)
+  createdAt  DateTime     @default(now())
+  updatedAt  DateTime     @updatedAt
+  RetroEmoji RetroEmoji[]
+}
+
+model RetroComment {
+  id          String     @id @default(auto()) @map("_id") @db.ObjectId
+  commenter   User       @relation(fields: [commenterId], references: [id])
+  commenterId String     @db.ObjectId
+  board       RetroBoard @relation(fields: [boardId], references: [id])
+  boardId     String     @db.ObjectId
+  comment     String
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
+}
+
+model RetroEmoji {
+  id          String    @id @default(auto()) @map("_id") @db.ObjectId
+  commenter   User      @relation(fields: [commenterId], references: [id])
+  commenterId String    @db.ObjectId
+  retroItem   RetroItem @relation(fields: [retroItemId], references: [id])
+  retroItemId String    @db.ObjectId
+  emoji       String
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+}
