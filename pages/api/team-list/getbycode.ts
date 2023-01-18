@@ -1,6 +1,7 @@
 // Next.js API route support: https://nextjs.org/docs/api-routes/introduction
 import type {NextApiRequest, NextApiResponse} from 'next'
 import {Team as TeamType} from '../../../types/team'
+import prisma from '../../../lib/prisma'
 
 export default async function handler(
   req: NextApiRequest,
@@ -12,7 +13,7 @@ export default async function handler(
     res.status(500).json('No team in query')
   }
 
-  const teamInfo = await prisma?.team.findUnique({
+  const teamInfo = await prisma.team.findUnique({
     where: {code: code?.toString()},
   })
 
