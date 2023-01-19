@@ -7,18 +7,22 @@ export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse<TeamType | string>
 ) {
-  const {code} = req.query
+  if (req.method !== 'GET') {
+    return res.status(405).send('Only Get requests allowed')
+  }
 
-  if (!code) {
+  const {id} = req.query
+
+  if (!id) {
     res.status(500).json('No team in query')
   }
 
   const teamInfo = await prisma.team.findUnique({
-    where: {code: code?.toString()},
+    where: {id: id?.toString()},
   })
 
   if (!teamInfo) {
-    res.status(404).json(code + ' Team not found')
+    res.status(404).json(id + ' Team not found')
   }
 
   res.status(200).json(teamInfo!)

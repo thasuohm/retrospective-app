@@ -28,8 +28,7 @@ enum BoardType {
 }
 
 model Team {
-  id          String       @id @default(auto()) @map("_id") @db.ObjectId
-  code        String       @unique
+  id          String       @id @map("_id")
   name        String
   description String
   User        User[]
@@ -40,8 +39,8 @@ model User {
   id           String         @id @default(auto()) @map("_id") @db.ObjectId
   email        String         @unique
   name         String
-  team         Team           @relation(fields: [teamId], references: [id])
-  teamId       String         @db.ObjectId
+  team         Team?          @relation(fields: [teamId], references: [id])
+  teamId       String?
   role         Role
   status       AccountStatus
   createdAt    DateTime       @default(now())
@@ -57,7 +56,7 @@ model RetroBoard {
   creatorId    String         @db.ObjectId
   title        String
   team         Team           @relation(fields: [teamId], references: [id])
-  teamId       String         @db.ObjectId
+  teamId       String
   password     String
   endDate      DateTime?
   opening      Boolean

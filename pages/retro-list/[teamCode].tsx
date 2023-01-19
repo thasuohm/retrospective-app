@@ -6,7 +6,7 @@ import Button from '../../components/Button'
 import RetroBoardCard from '../../components/cards/RetroBoardCard'
 
 const RetroListPage = (props: any) => {
-  const {name, description, code, id} = props.team
+  const {name, description, id} = props.team
   const router = useRouter()
 
   const createRetro = () => {

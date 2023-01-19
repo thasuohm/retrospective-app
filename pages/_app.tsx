@@ -13,7 +13,6 @@ import AuthProvider from '../components/AuthProvider'
 
 export default function App({Component, pageProps}: AppProps) {
   const queryClient = new QueryClient()
-
   return (
     <AuthProvider>
       <QueryClientProvider client={queryClient}>

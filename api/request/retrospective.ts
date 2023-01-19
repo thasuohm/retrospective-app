@@ -4,8 +4,8 @@ const getTeamList = () => {
   return axios.get('/team-list')
 }
 
-const getTeam = (code: string) => {
-  return axios.get('/team-list/getbycode?code=' + code)
+const getTeam = (id: string) => {
+  return axios.get('/team-list/getbyid?id=' + id)
 }
 
 const getRetroList = () => {}

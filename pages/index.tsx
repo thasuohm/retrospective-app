@@ -1,4 +1,4 @@
-import {useMemo, useState} from 'react'
+import {useEffect, useMemo, useState} from 'react'
 import Button from '../components/Button'
 import Select from 'react-select'
 import {ReactSelectState} from '../types/components'
@@ -7,18 +7,37 @@ import useTeamList from '../api/query/useTeamList'
 import {Team} from '../types/team'
 import Head from 'next/head'
 import {useRouter} from 'next/router'
+import useUserChangeTeam from '../api/query/useUserChangeTeam'
+import {useSession} from 'next-auth/react'
+import useUser from '../api/query/useUser'
 
 export default function Home() {
+  const {data: teams} = useTeamList()
+  const router = useRouter()
+  const {data: session} = useSession()
+  const {data: user} = useUser(session ? true : false)
+  const {mutate: userChangeTeam} = useUserChangeTeam()
+
   const [selectedTeam, setSelectedTeam] = useState<ReactSelectState | null>(
     null
   )
 
-  const {data: teams} = useTeamList()
-  const router = useRouter()
+  useEffect(() => {
+    if (user && teams) {
+      const team = teams.find((item) => user.teamId === item.id)
+      if (team) {
+        setSelectedTeam({value: team.id, label: team.name})
+      }
+    }
+  }, [user, teams])
+
+  useEffect(() => {
+    console.log(selectedTeam)
+  }, [selectedTeam])
 
   const teamListOption = useMemo(() => {
     return teams?.map((item: Team) => {
-      return {value: item.code, label: item.name}
+      return {value: item.id, label: item.name}
     })
   }, [teams])
 
@@ -27,6 +46,10 @@ export default function Home() {
       return toast.error('Please Select your TEAM!!', {
         position: toast.POSITION.TOP_CENTER,
       })
+    }
+
+    if (session) {
+      userChangeTeam(selectedTeam.value)
     }
 
     router.push({pathname: '/retro-list/' + selectedTeam.value})
@@ -43,12 +66,15 @@ export default function Home() {
             Choose your Team
           </h1>
 
-          <Select
-            defaultValue={selectedTeam}
-            onChange={setSelectedTeam}
-            options={teamListOption}
-            instanceId="team-select"
-          />
+          {((teamListOption && !user?.teamId) ||
+            (teamListOption && selectedTeam)) && (
+            <Select
+              defaultValue={selectedTeam}
+              onChange={setSelectedTeam}
+              options={teamListOption}
+              instanceId="team-select"
+            />
+          )}
 
           <Button
             type="button"

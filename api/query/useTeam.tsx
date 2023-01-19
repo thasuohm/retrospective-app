@@ -1,5 +1,3 @@
-// Access the client
-
 import {useQuery} from 'react-query'
 import {Team} from '../../types/team'
 import retrospectiveService from '../request/retrospective'

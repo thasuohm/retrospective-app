@@ -5,9 +5,13 @@ export default async function addTeam(
   req: NextApiRequest,
   res: NextApiResponse
 ) {
-  const {code, name, description} = req.body
+  if (req.method !== 'POST') {
+    return res.status(405).send('Only Post requests allowed')
+  }
 
-  await prisma.team.create({data: {code, name, description}})
+  const {id, name, description} = req.body
+
+  await prisma.team.create({data: {id, name, description}})
 
   res.status(200).json(name + ' Team has been added')
 }
