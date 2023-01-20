@@ -91,7 +91,7 @@ export default function Home() {
   )
 }
 
-export async function getStaticProps() {
+export async function getStaticProps<GetStaticProps>() {
   const queryClient = new QueryClient()
 
   await queryClient.prefetchQuery('get-team-list', async () => {

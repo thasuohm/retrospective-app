@@ -3,20 +3,20 @@ import {GetStaticPaths, GetStaticProps} from 'next'
 import Head from 'next/head'
 import {useRouter} from 'next/router'
 import useBoardByTeam from '../../api/query/board/useBoardByTeam'
-import retrospectiveService from '../../api/request/retrospective'
 import Button from '../../components/Button'
 import RetroBoardCard from '../../components/cards/RetroBoardCard'
+import prisma from '../../prisma'
 
 const RetroListPage = (props: any) => {
-  const {team} = props
+  const {teamInfo} = props
   const router = useRouter()
-  const {data: boardList} = useBoardByTeam(team?.id)
+  const {data: boardList} = useBoardByTeam(teamInfo?.id)
 
-  if (!team) {
+  if (!teamInfo) {
     return <p>Loading...</p>
   }
 
-  const {name, description} = team
+  const {name, description} = teamInfo
 
   const createRetro = () => {
     router.push('/create-retro')
@@ -68,37 +68,29 @@ export const getStaticProps: GetStaticProps = async (context) => {
   const {params} = context
 
   const teamCode: string = params!.teamCode as string
-  const team = await retrospectiveService
-    .getTeam(teamCode!)
-    .then((res) => {
-      return res?.data
-    })
-    .catch((err) => {
-      if (err.status === 404) {
-        return null
-      }
-    })
 
-  if (!team) {
+  const teamInfo = await prisma.team.findUnique({
+    where: {id: teamCode?.toString()},
+  })
+
+  if (!teamInfo) {
     return {
       notFound: true,
     }
   }
 
-  return {props: {team}, revalidate: 10}
+  return {
+    props: {teamInfo},
+    revalidate: 10,
+  }
 }
 
 export const getStaticPaths: GetStaticPaths = async () => {
-  const staticPath = await retrospectiveService
-    .getTeamList()
-    .then((res) => {
-      return res.data.map((team: Team) => {
-        return {params: {teamCode: team.id}}
-      })
-    })
-    .catch(() => {
-      return []
-    })
+  const allTeam = await prisma.team.findMany().catch(() => [])
+
+  const staticPath = allTeam?.map((team: Team) => {
+    return {params: {teamCode: team?.id}}
+  })
 
   return {
     paths: staticPath,
