@@ -10,9 +10,7 @@ import RetroBoardCard from '../../components/cards/RetroBoardCard'
 const RetroListPage = (props: any) => {
   const {team} = props
   const router = useRouter()
-  const {data: boardList} = useBoardByTeam(team.id)
-
-  console.log(boardList)
+  const {data: boardList} = useBoardByTeam(team?.id)
 
   if (!team) {
     return <p>Loading...</p>
@@ -54,9 +52,10 @@ const RetroListPage = (props: any) => {
         </div>
 
         <div className="flex flex-wrap gap-4 mx-auto w-full">
-          {boardList?.map((board) => (
-            <RetroBoardCard key={board.id} retroBoard={board} />
-          ))}
+          {boardList &&
+            boardList?.map((board) => (
+              <RetroBoardCard key={board.id} retroBoard={board} />
+            ))}
         </div>
       </main>
     </>
@@ -90,20 +89,16 @@ export const getStaticProps: GetStaticProps = async (context) => {
 }
 
 export const getStaticPaths: GetStaticPaths = async () => {
-  const teamList = await retrospectiveService
+  const staticPath = await retrospectiveService
     .getTeamList()
     .then((res) => {
-      return res?.data
+      return res.data.map((team: Team) => {
+        return {params: {teamCode: team.id}}
+      })
     })
-    .catch((err) => {
-      if (err.status === 404) {
-        return null
-      }
+    .catch(() => {
+      return []
     })
-
-  const staticPath = teamList.map((team: Team) => {
-    return {params: {teamCode: team.id}}
-  })
 
   return {
     paths: staticPath,
