@@ -53,6 +53,8 @@ export default function Home() {
     router.push({pathname: '/retro-list/' + selectedTeam.value})
   }
 
+  console.log(process.env.NEXTAUTH_URL)
+
   return (
     <>
       <Head>
