@@ -1,6 +1,6 @@
+import {Team} from '@prisma/client'
 import {useQuery} from 'react-query'
-import {Team} from '../../types/team'
-import retrospectiveService from '../request/retrospective'
+import retrospectiveService from '../../request/retrospective'
 
 const useTeam = (team: string) => {
   return useQuery('get-team', () =>

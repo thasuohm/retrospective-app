@@ -1,5 +1,5 @@
 import {useMutation, useQueryClient} from 'react-query'
-import userService from '../request/user'
+import userService from '../../request/user'
 
 const useUserChangeTeam = () => {
   const queryClient = useQueryClient()

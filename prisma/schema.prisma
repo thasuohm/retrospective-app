@@ -57,7 +57,7 @@ model RetroBoard {
   title        String
   team         Team           @relation(fields: [teamId], references: [id])
   teamId       String
-  password     String
+  password     String?
   endDate      DateTime?
   opening      Boolean
   anonymous    Boolean        @default(true)

@@ -1,3 +1,4 @@
+import {RetroBoard} from '@prisma/client'
 import axios from './axios'
 
 const getTeamList = () => {
@@ -8,10 +9,17 @@ const getTeam = (id: string) => {
   return axios.get('/team-list/getbyid?id=' + id)
 }
 
-const getRetroList = () => {}
-const createRetrospective = () => {}
-const updateRetrospective = () => {}
-const getRetrospective = () => {}
+const getRetroBoardByTeam = (teamId: string) => {
+  return axios.get('/board/getbyteamid?id=' + teamId)
+}
+
+const createRetrospectiveBoard = (boardInfo: RetroBoard) => {
+  return axios.post('/board/create', {...boardInfo, opening: true})
+}
+const updateRetrospectiveBoard = (boardId: string, boardInfo: RetroBoard) => {
+  return axios.put('/board/update?id=' + boardId, boardInfo)
+}
+const getRetrospectiveBoardById = () => {}
 const joinRetrospective = () => {}
 const sendRetrospective = () => {}
 const getRetroHistory = () => {}
@@ -21,10 +29,10 @@ const emojiRetrospective = () => {}
 const retrospectiveService = {
   getTeamList,
   getTeam,
-  getRetroList,
-  createRetrospective,
-  updateRetrospective,
-  getRetrospective,
+  getRetroBoardByTeam,
+  createRetrospectiveBoard,
+  updateRetrospectiveBoard,
+  getRetrospectiveBoardById,
   joinRetrospective,
   sendRetrospective,
   getRetroHistory,

@@ -1,14 +1,18 @@
+import {Team} from '@prisma/client'
 import {GetStaticPaths, GetStaticProps} from 'next'
 import Head from 'next/head'
 import {useRouter} from 'next/router'
+import useBoardByTeam from '../../api/query/board/useBoardByTeam'
 import retrospectiveService from '../../api/request/retrospective'
 import Button from '../../components/Button'
 import RetroBoardCard from '../../components/cards/RetroBoardCard'
-import {Team} from '../../types/team'
 
 const RetroListPage = (props: any) => {
   const {team} = props
   const router = useRouter()
+  const {data: boardList} = useBoardByTeam(team.id)
+
+  console.log(boardList)
 
   if (!team) {
     return <p>Loading...</p>
@@ -50,10 +54,9 @@ const RetroListPage = (props: any) => {
         </div>
 
         <div className="flex flex-wrap gap-4 mx-auto w-full">
-          <RetroBoardCard />
-          <RetroBoardCard />
-          <RetroBoardCard />
-          <RetroBoardCard />
+          {boardList?.map((board) => (
+            <RetroBoardCard key={board.id} retroBoard={board} />
+          ))}
         </div>
       </main>
     </>

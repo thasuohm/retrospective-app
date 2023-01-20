@@ -1,6 +1,6 @@
+import {User} from '@prisma/client'
 import {useQuery} from 'react-query'
-import {User} from '../../types/user'
-import userService from '../request/user'
+import userService from '../../request/user'
 
 const useUser = (enabled = true) => {
   return useQuery(

@@ -1,6 +1,6 @@
 'use client'
 import {useSession, signIn, signOut} from 'next-auth/react'
-import useUser from '../api/query/useUser'
+import useUser from '../api/query/user/useUser'
 
 const AuthButton = () => {
   const {data: session} = useSession()

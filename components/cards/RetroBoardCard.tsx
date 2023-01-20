@@ -1,7 +1,23 @@
+import {RetroBoard} from '@prisma/client'
+import moment from 'moment'
 import React from 'react'
 import Button from '../Button'
 
-const RetroBoardCard = () => {
+const RetroBoardCard = (props: any) => {
+  const {
+    id,
+    title,
+    teamId,
+    creatorId,
+    anonymous,
+    opening,
+    password,
+    createdAt,
+    team,
+    creator,
+    endDate,
+  } = props.retroBoard
+
   return (
     <div
       className="bg-slate-50 rounded-xl p-4 w-full sm:w-[calc(50%-1rem)] md:w-[calc(33%-0.55rem)] 
@@ -12,10 +28,13 @@ const RetroBoardCard = () => {
       </div>
       <div className="bg-slate-300 w-full h-24 rounded-lg"></div>
       <main className="break-all flex flex-col gap-1">
-        <div className="text-sm font-semibold">Topic: Retro 15/1/65</div>
-        <div className="text-sm font-semibold">Creator: someone@gmail.com</div>
-        <div className="text-sm font-semibold">Team: Developer</div>
-        <div className="text-sm font-semibold">Expire: 15/1/65 13.00</div>
+        <div className="text-sm font-semibold">Title: {title}</div>
+        <div className="text-sm font-semibold">Creator: {creator.email}</div>
+        <div className="text-sm font-semibold">Team: {team.name}</div>
+        <div className="text-sm font-semibold">
+          Expire:
+          {endDate ? moment(endDate).format('MMMM Do YYYY, h:mm') : 'None'}
+        </div>
         <Button
           type="button"
           style="primary"
