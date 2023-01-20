@@ -1,13 +1,20 @@
-import {GetServerSideProps} from 'next'
+import {GetStaticPaths, GetStaticProps} from 'next'
 import Head from 'next/head'
 import {useRouter} from 'next/router'
 import retrospectiveService from '../../api/request/retrospective'
 import Button from '../../components/Button'
 import RetroBoardCard from '../../components/cards/RetroBoardCard'
+import {Team} from '../../types/team'
 
 const RetroListPage = (props: any) => {
-  const {name, description, id} = props.team
+  const {team} = props
   const router = useRouter()
+
+  if (!team) {
+    return <p>Loading...</p>
+  }
+
+  const {name, description} = team
 
   const createRetro = () => {
     router.push('/create-retro')
@@ -55,8 +62,10 @@ const RetroListPage = (props: any) => {
 
 export default RetroListPage
 
-export const getServerSideProps: GetServerSideProps = async (context) => {
-  const teamCode: string = context.query.teamCode as string
+export const getStaticProps: GetStaticProps = async (context) => {
+  const {params} = context
+
+  const teamCode: string = params!.teamCode as string
   const team = await retrospectiveService
     .getTeam(teamCode!)
     .then((res) => {
@@ -74,5 +83,27 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
     }
   }
 
-  return {props: {team}}
+  return {props: {team}, revalidate: 10}
+}
+
+export const getStaticPaths: GetStaticPaths = async () => {
+  const teamList = await retrospectiveService
+    .getTeamList()
+    .then((res) => {
+      return res?.data
+    })
+    .catch((err) => {
+      if (err.status === 404) {
+        return null
+      }
+    })
+
+  const staticPath = teamList.map((team: Team) => {
+    return {params: {teamCode: team.id}}
+  })
+
+  return {
+    paths: staticPath,
+    fallback: true,
+  }
 }

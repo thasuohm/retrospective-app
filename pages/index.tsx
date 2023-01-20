@@ -4,12 +4,14 @@ import Select from 'react-select'
 import {ReactSelectState} from '../types/components'
 import {toast} from 'react-toastify'
 import useTeamList from '../api/query/useTeamList'
-import {Team} from '../types/team'
+import {Team, TeamList} from '../types/team'
 import Head from 'next/head'
 import {useRouter} from 'next/router'
 import useUserChangeTeam from '../api/query/useUserChangeTeam'
 import {useSession} from 'next-auth/react'
 import useUser from '../api/query/useUser'
+import {dehydrate, QueryClient} from 'react-query'
+import retrospectiveService from '../api/request/retrospective'
 
 export default function Home() {
   const {data: teams} = useTeamList()
@@ -30,10 +32,6 @@ export default function Home() {
       }
     }
   }, [user, teams])
-
-  useEffect(() => {
-    console.log(selectedTeam)
-  }, [selectedTeam])
 
   const teamListOption = useMemo(() => {
     return teams?.map((item: Team) => {
@@ -91,4 +89,21 @@ export default function Home() {
       </main>
     </>
   )
+}
+
+export async function getStaticProps() {
+  const queryClient = new QueryClient()
+
+  await queryClient.prefetchQuery('get-team-list', async () => {
+    return await retrospectiveService
+      .getTeamList()
+      .then((res) => res.data as TeamList)
+  })
+
+  return {
+    props: {
+      dehydratedState: dehydrate(queryClient),
+    },
+    revalidate: 10,
+  }
 }
