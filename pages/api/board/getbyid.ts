@@ -50,8 +50,8 @@ export default async function handler(
   }
 
   if (retroBoard!.password !== null || retroBoard!.password !== '') {
-    const permission = await prisma.retroBoardPermission.findUnique({
-      where: {boardId: retroBoard!.id, userId: user!.email},
+    const permission = await prisma.retroBoardPermission.findFirst({
+      where: {boardId: retroBoard!.id, userId: user!.id},
     })
 
     if (!permission) {
