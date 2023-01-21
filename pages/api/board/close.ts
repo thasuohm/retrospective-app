@@ -8,24 +8,14 @@ export default async function createBoard(
   req: NextApiRequest,
   res: NextApiResponse
 ) {
-  if (req.method !== 'POST') {
-    return res.status(405).send('Only Post requests allowed')
+  if (req.method !== 'PUT') {
+    return res.status(405).send('Only Put requests allowed')
   }
 
   const token = await getToken({req, secret})
 
   if (!token) {
-    return res.status(403).send('Please login before create Board')
-  }
-
-  const {title, teamId, password, endDate} = req.body
-
-  if (!title) {
-    return res.status(400).send('please define Board Title')
-  }
-
-  if (!teamId) {
-    return res.status(400).send('please select Team for this Board!')
+    return res.status(403).send('Please login')
   }
 
   const {id} = req.query
@@ -53,12 +43,9 @@ export default async function createBoard(
   await prisma.retroBoard.update({
     where: {id: id?.toString()},
     data: {
-      title,
-      teamId,
-      password,
-      endDate,
+      opening: false,
     },
   })
 
-  res.status(200).json(`retro board: ${title} has been update!!`)
+  res.status(200).json(`retro board: ${id} has been close!!`)
 }

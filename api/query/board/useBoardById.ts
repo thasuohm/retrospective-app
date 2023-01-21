@@ -2,7 +2,7 @@ import {RetroBoard} from '@prisma/client'
 import {useQuery} from 'react-query'
 import retrospectiveService from '../../request/retrospective'
 
-const useBoardByTeam = (boardId: string) => {
+const useBoardById = (boardId: string) => {
   return useQuery('get-board-by-id', () =>
     retrospectiveService
       .getRetrospectiveBoardById(boardId)
@@ -10,4 +10,4 @@ const useBoardByTeam = (boardId: string) => {
   )
 }
 
-export default useBoardByTeam
+export default useBoardById

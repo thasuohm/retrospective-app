@@ -18,7 +18,7 @@ export default async function createBoard(
     return res.status(403).send('Please login before create Board')
   }
 
-  const {title, teamId, opening, password, endDate, anonymous} = req.body
+  const {title, teamId, password, endDate, anonymous} = req.body
 
   if (!title) {
     return res.status(400).send('please define Board Title')
@@ -32,11 +32,15 @@ export default async function createBoard(
     where: {email: token!.email?.toString()},
   })
 
+  if (!user) {
+    return res.status(404).send('User not found')
+  }
+
   await prisma.retroBoard.create({
     data: {
       title,
       teamId,
-      opening,
+      opening: true,
       password,
       endDate,
       anonymous,
