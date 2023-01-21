@@ -1,4 +1,4 @@
-import {RetroBoard} from '@prisma/client'
+import {RetroBoard, RetroItem} from '@prisma/client'
 import axios from './axios'
 
 const getTeamList = () => {
@@ -27,8 +27,12 @@ const closeRetrospectiveBoard = (boardId: string) => {
   return axios.put('/board/close?id=' + boardId)
 }
 
-const joinRetrospective = () => {}
-const sendRetrospective = () => {}
+const joinRetrospective = (boardId: string, password: string) => {
+  return axios.post('/board/join?id=' + boardId, {password})
+}
+const sendRetrospective = (boardId: string, retroItem: RetroItem) => {
+  return axios.post('/board/senditem?id=' + boardId, retroItem)
+}
 const getRetroHistory = () => {}
 const commentRetrospective = () => {}
 const emojiRetrospective = () => {}

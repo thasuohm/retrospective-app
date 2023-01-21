@@ -8,14 +8,15 @@ const secret = process.env.NEXTAUTH_SECRET
 
 export default async function handler(
   req: NextApiRequest,
-  res: NextApiResponse<RetroBoard | string>
+  res: NextApiResponse<string>
 ) {
-  if (req.method !== 'GET') {
-    return res.status(405).send('Only Get requests allowed')
+  if (req.method !== 'POST') {
+    return res.status(405).send('Only Post requests allowed')
   }
 
   const {id} = req.query
   const token = await getToken({req, secret})
+  const {password} = req.body
 
   if (!token) {
     return res.status(403).send('Please login before')
@@ -27,14 +28,6 @@ export default async function handler(
 
   const retroBoard = await prisma.retroBoard.findUnique({
     where: {id: id?.toString()},
-    include: {
-      creator: {
-        select: {
-          email: true,
-        },
-      },
-      team: true,
-    },
   })
 
   if (!retroBoard) {
@@ -49,17 +42,13 @@ export default async function handler(
     return res.status(404).send('User not found')
   }
 
-  if (retroBoard!.password !== null || retroBoard!.password !== '') {
-    const permission = await prisma.retroBoardPermission.findUnique({
-      where: {boardId: retroBoard!.id, userId: user!.email},
-    })
-
-    if (!permission) {
-      return res
-        .status(403)
-        .send('Please enter password of this board before join')
-    }
+  if (password !== retroBoard!.password) {
+    return res.status(500).send('Wrong Password :(')
   }
 
-  res.status(200).json(retroBoard!)
+  await prisma.retroBoardPermission.create({
+    data: {boardId: retroBoard!.id, userId: user!.id},
+  })
+
+  res.status(200).json('you has been join to ' + retroBoard!.id + ' Board :)')
 }

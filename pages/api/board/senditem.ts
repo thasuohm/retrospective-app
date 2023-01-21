@@ -4,20 +4,21 @@ import prisma from '../../../prisma'
 
 const secret = process.env.NEXTAUTH_SECRET
 
-export default async function closeBoard(
+export default async function sendItem(
   req: NextApiRequest,
   res: NextApiResponse
 ) {
-  if (req.method !== 'PUT') {
-    return res.status(405).send('Only Put requests allowed')
+  if (req.method !== 'POST') {
+    return res.status(405).send('Only Post requests allowed')
   }
 
   const token = await getToken({req, secret})
 
   if (!token) {
-    return res.status(403).send('Please login')
+    return res.status(403).send('Please login before create Board')
   }
 
+  const {type, content} = req.body
   const {id} = req.query
 
   const user = await prisma.user.findUnique({
@@ -36,20 +37,19 @@ export default async function closeBoard(
     return res.status(404).json(id + ' Board not found')
   }
 
-  if (user!.id !== boardInfo?.creatorId) {
-    return res.status(403).send('You are not Owner of this Board')
-  }
-
   if (!boardInfo.opening) {
-    return res.status(302).json('This Board already Close')
+    return res.status(403).send('This Board has been Close :(')
   }
 
-  await prisma.retroBoard.update({
-    where: {id: id?.toString()},
+  await prisma.retroItem.create({
     data: {
-      opening: false,
+      type,
+      content,
+      boardId: boardInfo.id,
+      pickup: false,
+      senderId: user.id,
     },
   })
 
-  res.status(200).json(`retro board: ${id} has been close!!`)
+  res.status(200).json(`your Retro content has been sent!!`)
 }

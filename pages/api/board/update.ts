@@ -4,7 +4,7 @@ import prisma from '../../../prisma'
 
 const secret = process.env.NEXTAUTH_SECRET
 
-export default async function createBoard(
+export default async function updateBoard(
   req: NextApiRequest,
   res: NextApiResponse
 ) {
