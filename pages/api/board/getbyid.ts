@@ -49,7 +49,10 @@ export default async function handler(
     return res.status(404).send('User not found')
   }
 
-  if (retroBoard!.password !== null || retroBoard!.password !== '') {
+  if (
+    user.id !== retroBoard!.creatorId &&
+    (retroBoard!.password !== null || retroBoard!.password !== '')
+  ) {
     const permission = await prisma.retroBoardPermission.findFirst({
       where: {boardId: retroBoard!.id, userId: user!.id},
     })

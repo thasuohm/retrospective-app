@@ -1,8 +1,7 @@
-// Next.js API route support: https://nextjs.org/docs/api-routes/introduction
-import {RetroBoard} from '@prisma/client'
 import type {NextApiRequest, NextApiResponse} from 'next'
 import {getToken} from 'next-auth/jwt'
 import prisma from '../../../prisma'
+import bcrypt from 'bcrypt'
 
 const secret = process.env.NEXTAUTH_SECRET
 
@@ -42,7 +41,7 @@ export default async function handler(
     return res.status(404).send('User not found')
   }
 
-  if (password !== retroBoard!.password) {
+  if (retroBoard!.password && !bcrypt.compare(password, retroBoard!.password)) {
     return res.status(500).send('Wrong Password :(')
   }
 

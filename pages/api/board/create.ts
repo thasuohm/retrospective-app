@@ -1,6 +1,7 @@
 import type {NextApiRequest, NextApiResponse} from 'next'
 import {getToken} from 'next-auth/jwt'
 import prisma from '../../../prisma'
+import bcrypt from 'bcrypt'
 
 const secret = process.env.NEXTAUTH_SECRET
 
@@ -8,6 +9,8 @@ export default async function createBoard(
   req: NextApiRequest,
   res: NextApiResponse
 ) {
+  const saltRounds = 11
+
   if (req.method !== 'POST') {
     return res.status(405).send('Only Post requests allowed')
   }
@@ -18,7 +21,7 @@ export default async function createBoard(
     return res.status(403).send('Please login before create Board')
   }
 
-  const {title, teamId, password, endDate, anonymous} = req.body
+  let {title, teamId, password, endDate, anonymous} = req.body
 
   if (!title) {
     return res.status(400).send('please define Board Title')
@@ -34,6 +37,10 @@ export default async function createBoard(
 
   if (!user) {
     return res.status(404).send('User not found')
+  }
+
+  if (!password || password === '') {
+    password = bcrypt.hash(password, saltRounds)
   }
 
   await prisma.retroBoard.create({

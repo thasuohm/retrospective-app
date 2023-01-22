@@ -41,6 +41,21 @@ export default async function sendItem(
     return res.status(403).send('This Board has been Close :(')
   }
 
+  if (
+    user.id !== boardInfo.creatorId &&
+    (boardInfo!.password !== null || boardInfo!.password !== '')
+  ) {
+    const permission = await prisma.retroBoardPermission.findFirst({
+      where: {boardId: boardInfo!.id, userId: user!.id},
+    })
+
+    if (!permission) {
+      return res
+        .status(403)
+        .send('Please enter password of this board before access')
+    }
+  }
+
   await prisma.retroItem.create({
     data: {
       type,
