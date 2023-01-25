@@ -73,9 +73,10 @@ const BoardPage = (props: any) => {
           <Button
             onClick={submitForm}
             type="submit"
-            style="secondary"
+            style="primary"
             size="md"
             customStyle="font-semibold mt-12"
+            applyDark={true}
           >
             Send It!
           </Button>

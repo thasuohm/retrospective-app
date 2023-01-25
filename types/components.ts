@@ -20,6 +20,7 @@ export interface ButtonProps {
   size: string
   isDisabled?: boolean
   customStyle?: string
+  applyDark?: boolean
 }
 
 export interface ReactSelectState {
