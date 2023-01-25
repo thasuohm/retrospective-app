@@ -41,7 +41,10 @@ export default async function handler(
     return res.status(404).send('User not found')
   }
 
-  if (retroBoard!.password && !bcrypt.compare(password, retroBoard!.password)) {
+  if (
+    retroBoard!.password &&
+    !(await bcrypt.compare(password, retroBoard!.password))
+  ) {
     return res.status(500).send('Wrong Password :(')
   }
 

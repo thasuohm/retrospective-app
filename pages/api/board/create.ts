@@ -40,7 +40,7 @@ export default async function createBoard(
   }
 
   if (!password || password === '') {
-    password = bcrypt.hash(password, saltRounds)
+    password = await bcrypt.hash(password, saltRounds)
   }
 
   await prisma.retroBoard.create({

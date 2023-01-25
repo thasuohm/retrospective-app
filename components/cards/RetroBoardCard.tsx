@@ -1,5 +1,7 @@
 import {RetroBoard} from '@prisma/client'
 import moment from 'moment'
+import Link from 'next/link'
+import {useRouter} from 'next/router'
 import React from 'react'
 import Button from '../Button'
 
@@ -17,6 +19,14 @@ const RetroBoardCard = (props: any) => {
     creator,
     endDate,
   } = props.retroBoard
+  const router = useRouter()
+
+  const joinMeeting = () => {
+    if (!password || password !== '') {
+    }
+
+    return router.push(`/board/${id}`)
+  }
 
   return (
     <div
@@ -48,7 +58,7 @@ const RetroBoardCard = (props: any) => {
             type="button"
             style="primary"
             size="sm"
-            onClick={() => {}}
+            onClick={joinMeeting}
             isDisabled={false}
             customStyle="w-full font-semibold"
           >

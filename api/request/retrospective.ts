@@ -20,7 +20,7 @@ const updateRetrospectiveBoard = (boardId: string, boardInfo: RetroBoard) => {
   return axios.put('/board/update?id=' + boardId, boardInfo)
 }
 const getRetrospectiveBoardById = (boardId: string) => {
-  return axios.get('/board/getboardbyid?id=' + boardId)
+  return axios.get('/board/getbyid?id=' + boardId)
 }
 
 const closeRetrospectiveBoard = (boardId: string) => {

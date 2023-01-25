@@ -1,5 +1,4 @@
-// Next.js API route support: https://nextjs.org/docs/api-routes/introduction
-import {RetroBoard} from '@prisma/client'
+import moment from 'moment'
 import type {NextApiRequest, NextApiResponse} from 'next'
 import {getToken} from 'next-auth/jwt'
 import prisma from '../../../prisma'
@@ -8,7 +7,7 @@ const secret = process.env.NEXTAUTH_SECRET
 
 export default async function handler(
   req: NextApiRequest,
-  res: NextApiResponse<RetroBoard | string>
+  res: NextApiResponse
 ) {
   if (req.method !== 'GET') {
     return res.status(405).send('Only Get requests allowed')
@@ -64,5 +63,11 @@ export default async function handler(
     }
   }
 
-  res.status(200).json(retroBoard!)
+  let timeLeft = 0
+
+  if (retroBoard?.endDate) {
+    timeLeft = moment().diff(retroBoard?.endDate, 'seconds')
+  }
+
+  res.status(200).json({retroBoard, timeLeft})
 }

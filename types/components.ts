@@ -15,10 +15,10 @@ interface onClickFunction {
 export interface ButtonProps {
   onClick: onClickFunction
   children: ReactNode
-  type: 'button' | 'submit' | 'reset' | undefined
+  type: 'button' | 'submit' | 'reset'
   style: 'primary' | 'secondary'
   size: string
-  isDisabled: boolean | undefined
+  isDisabled?: boolean
   customStyle?: string
 }
 
