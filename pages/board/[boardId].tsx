@@ -1,14 +1,36 @@
+import {BoardType, RetroItem} from '@prisma/client'
 import {GetStaticPaths, GetStaticProps} from 'next'
 import Head from 'next/head'
+import {useForm} from 'react-hook-form'
 import useBoardById from '../../api/query/board/useBoardById'
+import useUser from '../../api/query/user/useUser'
 import Button from '../../components/Button'
+import Input from '../../components/Input'
 
 const BoardPage = (props: any) => {
   const {boardId} = props
-
+  const {register, handleSubmit, reset} = useForm()
+  const {data: user} = useUser()
   const {data: boardInfo} = useBoardById(boardId)
 
-  const submitForm = () => {}
+  const submitForm = (data: any) => {
+    const retroItemList: RetroItem[] = []
+
+    Object.keys(data).forEach((key) => {
+      if (data[key] !== '') {
+        retroItemList.push({
+          type: BoardType[key as keyof typeof BoardType],
+          content: data[key],
+          senderId: user!.id,
+          boardId: boardId,
+        })
+      }
+    })
+
+    console.log(retroItemList)
+
+    reset()
+  }
 
   const pageTitle = boardInfo?.retroBoard.title
     ? boardInfo?.retroBoard.title + ' - Retrospective Creator'
@@ -54,24 +76,35 @@ const BoardPage = (props: any) => {
           </div>
         </section>
 
-        <form action="" className="flex flex-col gap-3 font-semibold mt-8">
-          <label htmlFor="" className="flex flex-col gap-2">
-            Good :)
-            <input type="text" placeholder="" />
-          </label>
+        <form
+          onSubmit={handleSubmit(submitForm)}
+          className="flex flex-col gap-3 font-semibold mt-8"
+        >
+          <Input
+            label="Good :)"
+            type="text"
+            placeHolder="tell about good thing..."
+            register={register}
+            registerLabel="GOOD"
+          />
 
-          <label htmlFor="" className="flex flex-col gap-2">
-            Bad T^T
-            <input type="text" placeholder="" />
-          </label>
+          <Input
+            label="Bad T^T"
+            type="text"
+            placeHolder="tell about bad thing..."
+            register={register}
+            registerLabel="BAD"
+          />
 
-          <label htmlFor="" className="flex flex-col gap-2">
-            Try _/|\_
-            <input type="text" placeholder="" />
-          </label>
+          <Input
+            label="Try _/|\_"
+            type="text"
+            placeHolder="what you want to do..."
+            register={register}
+            registerLabel="TRY"
+          />
 
           <Button
-            onClick={submitForm}
             type="submit"
             style="primary"
             size="md"

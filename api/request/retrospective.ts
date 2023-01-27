@@ -30,7 +30,7 @@ const closeRetrospectiveBoard = (boardId: string) => {
 const joinRetrospective = (boardId: string, password: string) => {
   return axios.post('/board/join?id=' + boardId, {password})
 }
-const sendRetrospective = (boardId: string, retroItem: RetroItem) => {
+const sendRetrospective = (boardId: string, retroItem: RetroItem[]) => {
   return axios.post('/board/senditem?id=' + boardId, retroItem)
 }
 const getRetroHistory = () => {}

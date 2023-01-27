@@ -8,8 +8,10 @@ module.exports = {
   theme: {
     extend: {
       fontFamily: {
-        'sanam-deklen': ['var(--font-sanam-deklen)'],
-        'five-yearsold': ['var(--font-five-yearsold)'],
+        'sanam-deklen': ['var(--font-sanam-deklen), var(--font-five-yearsold)'],
+        'five-yearsold': [
+          'var(--font-five-yearsold), var(--font-sanam-deklen)',
+        ],
       },
     },
   },
