@@ -1,20 +1,23 @@
-import {BoardType, RetroItem} from '@prisma/client'
+import {BoardType} from '@prisma/client'
 import {GetStaticPaths, GetStaticProps} from 'next'
 import Head from 'next/head'
 import {useForm} from 'react-hook-form'
 import useBoardById from '../../api/query/board/useBoardById'
+import useSendBoard from '../../api/query/board/useSendBoard'
 import useUser from '../../api/query/user/useUser'
 import Button from '../../components/Button'
 import Input from '../../components/Input'
+import {RetroItemCreate} from '../../types/request'
 
 const BoardPage = (props: any) => {
   const {boardId} = props
   const {register, handleSubmit, reset} = useForm()
   const {data: user} = useUser()
   const {data: boardInfo} = useBoardById(boardId)
+  const {mutate: sendBoard} = useSendBoard()
 
   const submitForm = (data: any) => {
-    const retroItemList: RetroItem[] = []
+    const retroItemList: RetroItemCreate[] = []
 
     Object.keys(data).forEach((key) => {
       if (data[key] !== '') {
@@ -29,11 +32,14 @@ const BoardPage = (props: any) => {
 
     console.log(retroItemList)
 
+    if (retroItemList.length > 0) {
+      sendBoard({boardId, retroItemList})
+    }
     reset()
   }
 
-  const pageTitle = boardInfo?.retroBoard.title
-    ? boardInfo?.retroBoard.title + ' - Retrospective Creator'
+  const pageTitle = boardInfo?.retroBoard?.title
+    ? boardInfo?.retroBoard?.title + ' - Retrospective Creator'
     : 'Retrospective Creator'
 
   return (
