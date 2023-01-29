@@ -67,6 +67,7 @@ export default function Home() {
           {((teamListOption && !user?.teamId) ||
             (teamListOption && selectedTeam)) && (
             <Select
+              id="team-select"
               defaultValue={selectedTeam}
               onChange={setSelectedTeam}
               options={teamListOption}
@@ -79,7 +80,6 @@ export default function Home() {
             style="primary"
             size="sm"
             onClick={searchRetroList}
-            isDisabled={false}
           >
             <b className="font-semibold font-sanam-deklen tracking-widest text-2xl px-12">
               Search
