@@ -15,6 +15,6 @@
     "jsx": "preserve",
     "incremental": true
   },
-  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", "cypress/support/commands.js", "cypress/support/commands.js", "cypress.config.js", "cypress.config.js"],
+  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", "cypress/support/commands.js", "cypress/support/commands.js", "cypress.config.js", "cypress.config.js", "cypress/unit/Card.cy.js", "jest/RetroBoardCard.test.jsrd.tjest/RetroBoardCard.test.jstroBoardCard.test.js"],
   "exclude": ["node_modules"]
 }

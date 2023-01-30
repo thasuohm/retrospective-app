@@ -1,6 +1,6 @@
-import {defineConfig} from 'cypress'
+import { defineConfig } from "cypress";
 
-const baseUrl = 'http://localhost:3000'
+const baseUrl = "http://localhost:3000";
 
 export default defineConfig({
   e2e: {
@@ -9,4 +9,11 @@ export default defineConfig({
     },
     baseUrl,
   },
-})
+
+  component: {
+    devServer: {
+      framework: "next",
+      bundler: "webpack",
+    },
+  },
+});

@@ -1,6 +1,5 @@
 import {RetroBoard} from '@prisma/client'
 import moment from 'moment'
-import Link from 'next/link'
 import {useRouter} from 'next/router'
 import React from 'react'
 import Button from '../Button'
@@ -30,6 +29,7 @@ const RetroBoardCard = (props: any) => {
 
   return (
     <div
+      id={`card-${id}`}
       className="bg-slate-50 rounded-xl p-4 w-full sm:w-[calc(50%-1rem)] md:w-[calc(33%-0.55rem)] 
     relative dark:text-slate-800 flex flex-col gap-2 shadow-sm shadow-slate-300 hover:shadow-md hover:cursor-pointer"
     >
