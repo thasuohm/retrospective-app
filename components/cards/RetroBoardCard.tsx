@@ -1,4 +1,3 @@
-import {RetroBoard} from '@prisma/client'
 import moment from 'moment'
 import {useRouter} from 'next/router'
 import React from 'react'

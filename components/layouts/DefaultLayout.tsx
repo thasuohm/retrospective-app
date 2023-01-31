@@ -1,9 +1,9 @@
-import {DefaultLayout} from '../../types/layouts'
+import {DefaultLayoutType} from '../../types/layouts'
 import Footer from '../Footer'
 import NavBar from '../NavBar'
 import ThemeRise from '../ThemeRise'
 
-const DefaultLayout: React.FC<DefaultLayout> = ({children}) => {
+const DefaultLayout: React.FC<DefaultLayoutType> = ({children}) => {
   return (
     <>
       <NavBar />
