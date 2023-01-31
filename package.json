@@ -9,7 +9,7 @@
     "lint": "next lint",
     "cypress": "cypress open",
     "postinstall": "prisma generate",
-    "jest": "jest",
+    "jest": "jest --silent=false",
     "jest:ci": "jest --ci"
   },
   "dependencies": {

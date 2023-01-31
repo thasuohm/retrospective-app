@@ -1,9 +1,13 @@
-import {RetroBoard} from '@prisma/client'
+import {RetroBoard, Team} from '@prisma/client'
 import {RetroItemCreate} from '../../types/request'
 import axios from './axios'
 
 const getTeamList = () => {
   return axios.get('/team-list')
+}
+
+const addTeam = (team: Team) => {
+  return axios.post('/team-list/add', team)
 }
 
 const getTeam = (id: string) => {
@@ -43,6 +47,7 @@ const emojiRetrospective = () => {}
 
 const retrospectiveService = {
   getTeamList,
+  addTeam,
   getTeam,
   getRetroBoardByTeam,
   createRetrospectiveBoard,

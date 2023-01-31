@@ -2,6 +2,7 @@ import {ReactNode} from 'react'
 import React from 'react'
 
 export interface ButtonProps {
+  id?: string
   onClick?(data: any): void
   children: ReactNode
   type: 'button' | 'submit' | 'reset'
@@ -14,6 +15,7 @@ export interface ButtonProps {
 
 const Button: React.FC<ButtonProps> = (props) => {
   const {
+    id,
     type,
     style,
     children,
@@ -52,6 +54,7 @@ const Button: React.FC<ButtonProps> = (props) => {
 
   return (
     <button
+      id={id}
       type={type}
       className={`${styleSwitch()} ${sizeSwitch()} ${customStyle} hover:opacity-80 duration-150 ${
         isDisabled && 'opacity-80'

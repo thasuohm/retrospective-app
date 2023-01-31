@@ -33,6 +33,7 @@ const NavBar: React.FC = () => {
       <div className="flex gap-2 md:gap-4 justify-between items-center text-md md:text-lg">
         {theme === 'dark' ? (
           <button
+            id="light-mode-switch"
             title="light-mode-switch"
             className="p-1 rounded-full shrink-0 w-8 h-8 hover:opacity-90"
             onClick={() => changeMode('light')}
@@ -42,6 +43,7 @@ const NavBar: React.FC = () => {
           </button>
         ) : (
           <button
+            id="dark-mode-switch"
             title="dark-mode-switch"
             className="p-1 rounded-full shrink-0 w-8 h-8 hover:opacity-90"
             type="button"

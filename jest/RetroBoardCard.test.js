@@ -23,7 +23,7 @@ const boardInfo = [
     endDate: null,
   },
   {
-    id: '1',
+    id: '2',
     title: 'test board',
     teamId: 'dev',
     creatorId: '1',
@@ -39,12 +39,31 @@ const boardInfo = [
     },
     endDate: null,
   },
+  {
+    id: '3',
+    title: 'test board',
+    teamId: 'dev',
+    creatorId: '1',
+    anonymous: true,
+    opening: false,
+    password: null,
+    createdAt: null,
+    team: {
+      name: 'Developer',
+    },
+    creator: {
+      email: 'test@test.com',
+    },
+    endDate: null,
+  },
 ]
 
-it('show correct item', () => {
-  for (let i = 0; i < boardInfo.length; i++) {
-    expect(boardInfo[i].creator.email).toBeDefined()
-  }
+describe('all boardInfo correct data', () => {
+  test.each(boardInfo)(`board item %j`, (boardItem) => {
+    expect(boardItem.title).toBeDefined()
+    expect(boardItem.teamId).toBeDefined()
+    expect(boardItem.creator.email).toBeDefined()
+  })
 })
 
 it('should show correct info', () => {
@@ -55,7 +74,20 @@ it('should show correct info', () => {
       retroBoardCard.getAllByText('Creator: ' + boardInfo[i].creator.email)
     )
     expect(retroBoardCard.getAllByText('Team: ' + boardInfo[i].team.name))
+  }
+})
 
-    expect(retroBoardCard.getAllByText(boardInfo[i].opening ? 'OPENING' : 'CLOSED'))
+it('should correct board status', () => {
+  for (let i = 0; i < boardInfo.length; i++) {
+    const retroBoardCard = render(<RetroBoardCard retroBoard={boardInfo[i]} />)
+    expect(
+      retroBoardCard.getAllByText(boardInfo[i].opening ? /OPENING/i : /CLOSED/i)
+    )
+
+    expect(
+      retroBoardCard.getAllByText(
+        boardInfo[i].opening ? /Let's write !!/i : /See Result !!/i
+      )
+    )
   }
 })

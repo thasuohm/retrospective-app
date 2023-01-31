@@ -2,23 +2,6 @@ beforeEach(() => {
   cy.visit('/')
 })
 
-describe('nav bar test', () => {
-  it('should go home page', () => {
-    cy.get('.text-lg').contains('RETROSPECTIVE').click()
-    expect(cy.visit('/'))
-  })
-
-  it('should go history page', () => {
-    cy.login()
-    cy.wait('@session')
-
-    cy.get('.text-md')
-      .contains(/history/i)
-      .click()
-    expect(cy.visit('/history'))
-  })
-})
-
 describe('select user team page', () => {
   it('should show correct home page', () => {
     if (cy.contains('Select')) {

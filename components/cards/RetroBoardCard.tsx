@@ -28,7 +28,7 @@ const RetroBoardCard = (props: any) => {
 
   return (
     <div
-      id={`card-${id}`}
+      id={`${id}`}
       className="bg-slate-50 rounded-xl p-4 w-full sm:w-[calc(50%-1rem)] md:w-[calc(33%-0.55rem)] 
     relative dark:text-slate-800 flex flex-col gap-2 shadow-sm shadow-slate-300 hover:shadow-md hover:cursor-pointer"
     >
@@ -54,6 +54,7 @@ const RetroBoardCard = (props: any) => {
 
         {opening ? (
           <Button
+            id=""
             type="button"
             style="primary"
             size="sm"
