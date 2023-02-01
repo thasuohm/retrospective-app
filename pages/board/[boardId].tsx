@@ -13,24 +13,26 @@ import Input from '../../components/Input'
 import {RetroItemCreate} from '../../types/request'
 import Select from 'react-select'
 import {ReactSelectState} from '../../types/components'
-import {getSession, useSession} from 'next-auth/react'
+import {useSession} from 'next-auth/react'
 import useUpdateBoard from '../../api/query/board/useUpdateBoard'
 import moment from 'moment'
+import {useRouter} from 'next/router'
+import {unstable_getServerSession} from 'next-auth'
+import {authOptions} from '../api/auth/[...nextauth]'
 
-const BoardPage = ({boardId}: {boardId: string}) => {
+const BoardPage = () => {
+  const router = useRouter()
+  const {boardId} = router.query
+
   const {data: session} = useSession()
   const {register, handleSubmit, reset} = useForm()
   const {data: user} = useUser(session ? true : false)
-  const {data: boardInfo} = useBoardById(boardId?.toString())
+  const {data: boardInfo} = useBoardById(boardId ? boardId?.toString() : '')
   const {mutate: sendBoard} = useSendBoard()
   const {data: teams} = useTeamList()
   const {mutate: updateBoard} = useUpdateBoard()
-
-  console.log(boardInfo)
-
   const {register: ownerRegister, handleSubmit: ownerHandleSubmit} =
     useForm<any>()
-
   const [selectedTeam, setSelectedTeam] = useState<ReactSelectState | null>()
 
   useEffect(() => {
@@ -62,15 +64,13 @@ const BoardPage = ({boardId}: {boardId: string}) => {
           type: BoardType[key as keyof typeof BoardType],
           content: data[key],
           senderId: user!.id,
-          boardId: boardId,
+          boardId: boardId ? boardId?.toString() : '',
         })
       }
     })
 
-    console.log(retroItemList)
-
     if (retroItemList.length > 0) {
-      sendBoard({boardId, retroItemList})
+      sendBoard({boardId: boardId ? boardId?.toString() : '', retroItemList})
     } else {
       toast.error('Please add some of your comment')
     }
@@ -78,12 +78,10 @@ const BoardPage = ({boardId}: {boardId: string}) => {
   }
 
   const submitUpdate = (data: {endDate: string; password: string}) => {
-    console.log(data)
-
     const {endDate, password} = data
 
     updateBoard({
-      boardId,
+      boardId: boardId ? boardId?.toString() : '',
       boardInfo: {endDate, password, teamId: selectedTeam!.value},
     })
   }
@@ -229,27 +227,22 @@ const BoardPage = ({boardId}: {boardId: string}) => {
 export default BoardPage
 
 export const getServerSideProps: GetServerSideProps = async (context: any) => {
-  const boardId = context.query.boardId
-  const session = await getSession(context)
+  const session = await unstable_getServerSession(
+    context.req,
+    context.res,
+    authOptions
+  )
 
   if (!session) {
     return {
       redirect: {
         permanent: false,
-        destination: '/',
+        destination: '/?requireAuth=true',
       },
     }
   }
 
-  if (!boardId) {
-    return {
-      notFound: true,
-    }
-  }
-
   return {
-    props: {
-      boardId,
-    },
+    props: {},
   }
 }

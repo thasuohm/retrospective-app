@@ -9,8 +9,6 @@ import {useRouter} from 'next/router'
 import useUserChangeTeam from '../api/query/user/useUserChangeTeam'
 import {useSession} from 'next-auth/react'
 import useUser from '../api/query/user/useUser'
-import {dehydrate, QueryClient} from 'react-query'
-import retrospectiveService from '../api/request/retrospective'
 import {Team} from '@prisma/client'
 
 export default function Home() {
@@ -23,6 +21,12 @@ export default function Home() {
   const [selectedTeam, setSelectedTeam] = useState<ReactSelectState | null>(
     null
   )
+
+  useEffect(() => {
+    if (router?.query.requireAuth) {
+      toast.error('Please Login')
+    }
+  }, [router.query])
 
   useEffect(() => {
     if (user && teams) {
@@ -89,21 +93,4 @@ export default function Home() {
       </main>
     </>
   )
-}
-
-export async function getStaticProps<GetStaticProps>() {
-  const queryClient = new QueryClient()
-
-  await queryClient.prefetchQuery('get-team-list', async () => {
-    return await retrospectiveService
-      .getTeamList()
-      .then((res) => res.data as Team[])
-  })
-
-  return {
-    props: {
-      dehydratedState: dehydrate(queryClient),
-    },
-    revalidate: 10,
-  }
 }
