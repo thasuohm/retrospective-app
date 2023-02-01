@@ -1,3 +1,4 @@
+import {RetroItem} from '@prisma/client'
 import type {NextApiRequest, NextApiResponse} from 'next'
 import {getToken} from 'next-auth/jwt'
 import prisma from '../../../prisma'
@@ -18,7 +19,7 @@ export default async function sendItem(
     return res.status(403).send('Please login before create Board')
   }
 
-  const {type, content} = req.body
+  const item: RetroItem[] = req.body
   const {id} = req.query
 
   const user = await prisma.user.findUnique({
@@ -56,15 +57,9 @@ export default async function sendItem(
     }
   }
 
-  await prisma.retroItem.create({
-    data: {
-      type,
-      content,
-      boardId: boardInfo.id,
-      pickup: false,
-      senderId: user.id,
-    },
+  await prisma.retroItem.createMany({
+    data: item,
   })
 
-  res.status(200).json(`your Retro content has been sent!!`)
+  res.status(200).json(`your Retro comment has been sent!!`)
 }

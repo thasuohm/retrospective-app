@@ -1,7 +1,9 @@
 import {Team} from '@prisma/client'
 import {GetStaticPaths, GetStaticProps} from 'next'
+import {useSession} from 'next-auth/react'
 import Head from 'next/head'
 import {useRouter} from 'next/router'
+import {toast} from 'react-toastify'
 import useBoardByTeam from '../../api/query/board/useBoardByTeam'
 import Button from '../../components/Button'
 import RetroBoardCard from '../../components/cards/RetroBoardCard'
@@ -11,6 +13,7 @@ const RetroListPage = (props: any) => {
   const {teamInfo} = props
   const router = useRouter()
   const {data: boardList} = useBoardByTeam(teamInfo?.id)
+  const {data: session} = useSession()
 
   if (!teamInfo) {
     return <p>Loading...</p>
@@ -19,6 +22,10 @@ const RetroListPage = (props: any) => {
   const {name, description} = teamInfo
 
   const createRetro = () => {
+    if (!session) {
+      return toast.error('Please Login',)
+    }
+
     router.push('/create-retro')
   }
 

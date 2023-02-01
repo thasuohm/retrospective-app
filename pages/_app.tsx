@@ -19,7 +19,7 @@ export default function App({Component, pageProps}: AppProps) {
         <Hydrate state={pageProps.dehydratedState}>
           <ThemeProvider>
             <ToastContainer
-              bodyClassName={`${fiveYearsOldFont.variable} font-five-yearsold font-semibold`}
+              bodyClassName={`${fiveYearsOldFont.variable} ${sanamDeklen.variable} font-five-yearsold font-semibold`}
             />
             <main
               className={`duration-200 ${fiveYearsOldFont.variable} ${sanamDeklen.variable} font-five-yearsold `}

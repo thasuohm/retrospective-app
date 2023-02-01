@@ -2,7 +2,7 @@ import {User} from '@prisma/client'
 import {useQuery} from 'react-query'
 import userService from '../../request/user'
 
-const useUser = (enabled = true) => {
+const useUser = (enabled: boolean = true) => {
   return useQuery(
     'get-user',
     () => userService.getUser().then((res) => res.data as User),

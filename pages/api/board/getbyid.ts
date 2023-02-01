@@ -40,6 +40,11 @@ export default async function handler(
     res.status(404).json(id + ' Board not found')
   }
 
+  const retroItemCount = await prisma.retroItem.aggregate({
+    where: {boardId: id?.toString()},
+    _count: true,
+  })
+
   const user = await prisma.user.findUnique({
     where: {email: token!.email?.toString()},
   })
@@ -50,7 +55,8 @@ export default async function handler(
 
   if (
     user.id !== retroBoard!.creatorId &&
-    (retroBoard!.password !== null || retroBoard!.password !== '')
+    retroBoard!.password !== null &&
+    retroBoard!.password !== ''
   ) {
     const permission = await prisma.retroBoardPermission.findFirst({
       where: {boardId: retroBoard!.id, userId: user!.id},
@@ -66,8 +72,12 @@ export default async function handler(
   let timeLeft = 0
 
   if (retroBoard?.endDate) {
-    timeLeft = moment().diff(retroBoard?.endDate, 'seconds')
+    const now = new Date()
+
+    timeLeft = moment(retroBoard?.endDate).diff(now, 'seconds')
   }
 
-  res.status(200).json({retroBoard, timeLeft})
+  let isOwner = retroBoard?.creatorId === user.id
+
+  res.status(200).json({retroBoard, timeLeft, retroItemCount, isOwner})
 }

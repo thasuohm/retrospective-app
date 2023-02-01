@@ -1,6 +1,8 @@
 import moment from 'moment'
+import {useSession} from 'next-auth/react'
 import {useRouter} from 'next/router'
 import React from 'react'
+import {toast} from 'react-toastify'
 import Button from '../Button'
 
 const RetroBoardCard = (props: any) => {
@@ -17,10 +19,15 @@ const RetroBoardCard = (props: any) => {
     creator,
     endDate,
   } = props.retroBoard
+  const {data: session} = useSession()
   const router = useRouter()
 
   const joinMeeting = () => {
     if (!password || password !== '') {
+    }
+
+    if (!session) {
+      return toast.error('Please Login to Join this Board')
     }
 
     return router.push(`/board/${id}`)

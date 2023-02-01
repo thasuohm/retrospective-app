@@ -8,6 +8,8 @@ type InputProps = {
   isDisabled?: boolean
   registerLabel: string
   required?: boolean
+  autoComplete?: string
+  defaultValues?: string
 }
 
 const Input: React.FC<InputProps> = (props) => {
@@ -19,6 +21,8 @@ const Input: React.FC<InputProps> = (props) => {
     isDisabled,
     registerLabel,
     required,
+    autoComplete,
+    defaultValues,
   } = props
 
   return (
@@ -31,6 +35,8 @@ const Input: React.FC<InputProps> = (props) => {
         placeholder={placeHolder}
         disabled={isDisabled}
         {...register(registerLabel, {required})}
+        autoComplete={autoComplete}
+        defaultValue={defaultValues}
       />
     </label>
   )

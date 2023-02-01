@@ -39,7 +39,7 @@ export default async function createBoard(
     return res.status(404).send('User not found')
   }
 
-  if (!password || password === '') {
+  if (password || password !== '') {
     password = await bcrypt.hash(password, saltRounds)
   }
 
