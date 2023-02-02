@@ -23,7 +23,7 @@ const RetroListPage = (props: any) => {
 
   const createRetro = () => {
     if (!session) {
-      return toast.error('Please Login',)
+      return toast.error('Please Login')
     }
 
     router.push('/create-retro')
@@ -44,7 +44,12 @@ const RetroListPage = (props: any) => {
           </span>
         </div>
         <div className="w-full flex justify-between items-center">
-          <span>Found 10 Boards</span>
+          {boardList && boardList?.retroBoardCount > 0 ? (
+            <span>Found {boardList?.retroBoardCount} Boards</span>
+          ) : (
+            <span>Not Found Board</span>
+          )}
+
           <Button
             style="primary"
             onClick={createRetro}
@@ -59,8 +64,8 @@ const RetroListPage = (props: any) => {
         </div>
 
         <div className="flex flex-wrap gap-4 mx-auto w-full">
-          {boardList &&
-            boardList?.map((board) => (
+          {boardList?.retroBoard &&
+            boardList?.retroBoard?.map((board) => (
               <RetroBoardCard key={board.id} retroBoard={board} />
             ))}
         </div>

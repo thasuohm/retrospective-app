@@ -91,7 +91,8 @@ const HistoryByIdPage = () => {
             <table>
               <thead>
                 <tr>
-                  <th>Sender</th>
+                  {!boardInfo?.retroBoard.anonymous && <th>Sender</th>}
+
                   <th>Content</th>
                   <th>Other</th>
                   <th>Pin</th>
@@ -101,7 +102,9 @@ const HistoryByIdPage = () => {
                 {retroItemList &&
                   retroItemList.retroItem.map((item: any) => (
                     <tr key={item.id}>
-                      <td>{item.sender.email ?? 'Secret'}</td>
+                      {!boardInfo?.retroBoard.anonymous && (
+                        <td>{item.sender.email ?? 'Secret'}</td>
+                      )}
                       <td>{item.content}</td>
                       <td>
                         <Input

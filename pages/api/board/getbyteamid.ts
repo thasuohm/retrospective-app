@@ -5,7 +5,7 @@ import prisma from '../../../prisma'
 
 export default async function handler(
   req: NextApiRequest,
-  res: NextApiResponse<RetroBoard[] | string>
+  res: NextApiResponse
 ) {
   if (req.method !== 'GET') {
     return res.status(405).send('Only Get requests allowed')
@@ -18,7 +18,7 @@ export default async function handler(
   }
 
   const retroBoard = await prisma.retroBoard.findMany({
-    where: {teamId: id?.toString()},
+    where: {teamId: id?.toString(), opening: true},
     include: {
       creator: {
         select: {
@@ -29,9 +29,14 @@ export default async function handler(
     },
   })
 
+  const retroBoardCount = await prisma.retroBoard.aggregate({
+    where: {teamId: id?.toString(), opening: true},
+    _count: true,
+  })
+
   if (!retroBoard) {
     res.status(404).json(id + ' Team not found')
   }
 
-  res.status(200).json(retroBoard!)
+  res.status(200).json({retroBoard, retroBoardCount: retroBoardCount._count})
 }
