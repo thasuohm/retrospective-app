@@ -20,15 +20,16 @@ import {useRouter} from 'next/router'
 import {unstable_getServerSession} from 'next-auth'
 import {authOptions} from '../api/auth/[...nextauth]'
 import useTimer from '../../hooks/useTimer'
-import useJoinBoard from '../../api/query/board/useJoinBoard'
 import ConfirmModal from '../../components/Modal/ConfirmModal'
 import useCloseBoard from '../../api/query/board/useCloseBoard'
+import JoinBoardForm from '../../components/forms/joinBoardForm'
 
 const BoardPage = () => {
   const router = useRouter()
   const {boardId} = router.query
 
   const {data: session} = useSession()
+
   const {register, handleSubmit, reset} = useForm()
   const {data: user} = useUser(session ? true : false)
   const {
@@ -45,9 +46,6 @@ const BoardPage = () => {
     useForm<any>()
   const [selectedTeam, setSelectedTeam] = useState<ReactSelectState | null>()
   const {timer, timeOut} = useTimer(boardInfo ? boardInfo!.timeLeft : 0)
-  const {register: joinBoardRegister, handleSubmit: joinBoardHandleSubmit} =
-    useForm<any>()
-  const {mutate: joinBoard} = useJoinBoard()
   const [closeBoardModal, setCloseBoardModal] = useState<boolean>(false)
   const {mutate: closeBoard} = useCloseBoard()
 
@@ -75,45 +73,9 @@ const BoardPage = () => {
     return <div className="">Loading...</div>
   }
 
-  const joinBoardSubmit = (data: {password: string}) => {
-    console.log(data)
-    joinBoard({
-      boardId: boardId ? boardId?.toString() : '',
-      password: data?.password,
-    })
-  }
-
   if (isBoardError && boardError.response) {
     if (boardError.response.status === 403) {
-      return (
-        <>
-          <Head>
-            <title>No permission to see board</title>
-          </Head>
-          <div className="bg-slate-100 dark:bg-slate-800 flex flex-col gap-3 max-w-2xl mt-52 lg:mt-28 mx-auto p-4 rounded-2xl duration-150 dark:text-white">
-            <h1 className="text-xl font-semibold">
-              Enter board password to Join this Retrospective
-            </h1>
-            <form onSubmit={joinBoardHandleSubmit(joinBoardSubmit)}>
-              <Input
-                type="password"
-                placeHolder="Enter Board Password..."
-                register={joinBoardRegister}
-                registerLabel="password"
-              />
-              <Button
-                type="submit"
-                style="primary"
-                applyDark={true}
-                size="md"
-                customStyle="font-semibold"
-              >
-                Join Board
-              </Button>
-            </form>
-          </div>
-        </>
-      )
+      return <JoinBoardForm boardId={boardId ? boardId?.toString() : ''} />
     }
   }
 
@@ -205,21 +167,25 @@ const BoardPage = () => {
           </div>
         </header>
         <section className="flex flex-col gap-2 font-semibold">
-          <div className="flex gap-2 items-center">
-            <div>Creator</div>{' '}
-            <div className="text-lg bg-slate-300 dark:bg-slate-900 px-3 rounded-lg">
-              {boardInfo?.retroBoard.creator.email}
+          <div className="flex flex-wrap gap-2 items-center">
+            <div className="flex gap-2">
+              <div>Creator</div>{' '}
+              <div className="text-lg bg-slate-300 dark:bg-slate-900 px-3 rounded-lg">
+                {boardInfo?.retroBoard.creator.email}
+              </div>
             </div>
-            <div>Board Status</div>{' '}
-            {boardInfo?.retroBoard.opening ? (
-              <div className="text-lg dark:bg-slate-900 px-3 rounded-lg bg-green-600 text-white">
-                OPENING
-              </div>
-            ) : (
-              <div className="text-lg dark:bg-slate-900 px-3 rounded-lg bg-red-600 text-white">
-                CLOSED
-              </div>
-            )}
+            <div className="flex gap-2">
+              <div>Board Status</div>{' '}
+              {boardInfo?.retroBoard.opening ? (
+                <div className="text-lg dark:bg-slate-900 px-3 rounded-lg bg-green-600 text-white">
+                  OPENING
+                </div>
+              ) : (
+                <div className="text-lg dark:bg-slate-900 px-3 rounded-lg bg-red-600 text-white">
+                  CLOSED
+                </div>
+              )}
+            </div>
           </div>
           {boardInfo?.isOwner ? (
             <form
@@ -271,7 +237,7 @@ const BoardPage = () => {
                 </div>
               </div>
               <div className="flex gap-2 items-center">
-                <div>Close At </div>{' '}
+                <div>End At</div>{' '}
                 <div className="text-lg bg-slate-300 dark:bg-slate-900 px-2 rounded-lg">
                   {moment(boardInfo?.retroBoard.endDate).format(
                     'MMMM Do YYYY, h:mm a'

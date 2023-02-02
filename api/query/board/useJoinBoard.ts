@@ -10,12 +10,10 @@ const useJoinBoard = () => {
     {
       onSuccess: () => {
         queryClient.invalidateQueries('get-board-by-id')
-        toast.success("Let's write Comment!!")
+        toast.success('You are Joined!!')
       },
-      onError: (err) => {
-        console.log(err)
-        queryClient.invalidateQueries('get-board-by-id')
-        toast.error('Have some error Occur!!')
+      onError: (err: any) => {
+        toast.error(err?.response?.data?.message)
       },
     }
   )

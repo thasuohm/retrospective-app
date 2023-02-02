@@ -20,6 +20,7 @@ const useBoardById = (boardId: string) => {
       },
       enabled: boardId ? true : false,
       retry: 0,
+      refetchOnWindowFocus: false,
     }
   )
 }

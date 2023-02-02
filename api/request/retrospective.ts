@@ -41,6 +41,11 @@ const sendRetrospective = (
 ) => {
   return axios.post('/board/senditem?id=' + boardId, retroItemList)
 }
+
+const getRetrospectiveCommentList = (boardId: string) => {
+  return axios.get('/board/comment-list/' + boardId)
+}
+
 const getRetroHistory = () => {}
 const commentRetrospective = () => {}
 const emojiRetrospective = () => {}
@@ -56,6 +61,7 @@ const retrospectiveService = {
   closeRetrospectiveBoard,
   joinRetrospective,
   sendRetrospective,
+  getRetrospectiveCommentList,
   getRetroHistory,
   commentRetrospective,
   emojiRetrospective,

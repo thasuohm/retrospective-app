@@ -6,19 +6,8 @@ import {toast} from 'react-toastify'
 import Button from '../Button'
 
 const RetroBoardCard = (props: any) => {
-  const {
-    id,
-    title,
-    teamId,
-    creatorId,
-    anonymous,
-    opening,
-    password,
-    createdAt,
-    team,
-    creator,
-    endDate,
-  } = props.retroBoard
+  const {id, title, opening, password, team, creator, endDate} =
+    props.retroBoard
   const {data: session} = useSession()
   const router = useRouter()
 
@@ -31,6 +20,14 @@ const RetroBoardCard = (props: any) => {
     }
 
     return router.push(`/board/${id}`)
+  }
+
+  const seeResult = () => {
+    if (!session) {
+      return toast.error('Please Login to Join this Board')
+    }
+
+    return router.push(`/history/board/${id}`)
   }
 
   return (
@@ -76,7 +73,7 @@ const RetroBoardCard = (props: any) => {
             type="button"
             style="primary"
             size="sm"
-            onClick={() => {}}
+            onClick={seeResult}
             isDisabled={false}
             customStyle="w-full font-semibold"
           >
