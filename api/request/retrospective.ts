@@ -29,11 +29,11 @@ const getRetrospectiveBoardById = (boardId: string) => {
 }
 
 const closeRetrospectiveBoard = (boardId: string) => {
-  return axios.put('/board/close?id=' + boardId)
+  return axios.put('/board/close/' + boardId)
 }
 
 const joinRetrospective = (boardId: string, password: string) => {
-  return axios.post('/board/join?id=' + boardId, {password})
+  return axios.post('/board/join/' + boardId, {password})
 }
 const sendRetrospective = (
   boardId: string,

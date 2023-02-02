@@ -10,18 +10,18 @@ export default async function handler(
   res: NextApiResponse
 ) {
   if (req.method !== 'GET') {
-    return res.status(405).send('Only Get requests allowed')
+    return res.status(405).send({message: 'Only Get requests allowed'})
   }
 
   const {id} = req.query
   const token = await getToken({req, secret})
 
   if (!token) {
-    return res.status(403).send('Please login before')
+    return res.status(401).send({message: 'Please login'})
   }
 
   if (!id) {
-    res.status(500).json('No BoardId in query')
+    res.status(500).json({message: 'No BoardId in query'})
   }
 
   const retroBoard = await prisma.retroBoard.findUnique({
@@ -37,7 +37,7 @@ export default async function handler(
   })
 
   if (!retroBoard) {
-    res.status(404).json(id + ' Board not found')
+    res.status(404).json({message: id + ' Board not found'})
   }
 
   const retroItemCount = await prisma.retroItem.aggregate({
@@ -50,7 +50,18 @@ export default async function handler(
   })
 
   if (!user) {
-    return res.status(404).send('User not found')
+    return res.status(404).send({message: 'User not found'})
+  }
+
+  let timeLeft = 0
+  let localTimeOffset = 0
+
+  if (retroBoard?.endDate) {
+    const now = moment()
+    console.log(now, moment(retroBoard?.endDate))
+    timeLeft = moment(retroBoard?.endDate).diff(now, 'seconds')
+
+    localTimeOffset = new Date(retroBoard?.endDate).getTimezoneOffset()
   }
 
   if (
@@ -63,21 +74,30 @@ export default async function handler(
     })
 
     if (!permission) {
-      return res
-        .status(403)
-        .send('Please enter password of this board before join')
+      return res.status(403).send({
+        retroBoard: {
+          title: retroBoard?.title,
+          creator: {
+            email: retroBoard?.creator.email,
+          },
+          endDate: moment(retroBoard?.endDate)
+            .add(-localTimeOffset, 'm')
+            .toDate(),
+        },
+        message: 'Please enter password of this board before join',
+      })
     }
-  }
-
-  let timeLeft = 0
-
-  if (retroBoard?.endDate) {
-    const now = new Date()
-
-    timeLeft = moment(retroBoard?.endDate).diff(now, 'seconds')
   }
 
   let isOwner = retroBoard?.creatorId === user.id
 
-  res.status(200).json({retroBoard, timeLeft, retroItemCount, isOwner})
+  res.status(200).json({
+    retroBoard: {
+      ...retroBoard,
+      endDate: moment(retroBoard?.endDate).add(-localTimeOffset, 'm').toDate(),
+    },
+    timeLeft,
+    retroItemCount,
+    isOwner,
+  })
 }

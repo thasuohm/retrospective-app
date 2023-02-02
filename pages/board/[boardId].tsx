@@ -19,6 +19,10 @@ import moment from 'moment'
 import {useRouter} from 'next/router'
 import {unstable_getServerSession} from 'next-auth'
 import {authOptions} from '../api/auth/[...nextauth]'
+import useTimer from '../../hooks/useTimer'
+import useJoinBoard from '../../api/query/board/useJoinBoard'
+import ConfirmModal from '../../components/Modal/ConfirmModal'
+import useCloseBoard from '../../api/query/board/useCloseBoard'
 
 const BoardPage = () => {
   const router = useRouter()
@@ -27,13 +31,25 @@ const BoardPage = () => {
   const {data: session} = useSession()
   const {register, handleSubmit, reset} = useForm()
   const {data: user} = useUser(session ? true : false)
-  const {data: boardInfo} = useBoardById(boardId ? boardId?.toString() : '')
+  const {
+    data: boardInfo,
+    isLoading: isLoadingBoard,
+    isError: isBoardError,
+    error: boardError,
+  } = useBoardById(boardId ? boardId?.toString() : '')
+
   const {mutate: sendBoard} = useSendBoard()
   const {data: teams} = useTeamList()
   const {mutate: updateBoard} = useUpdateBoard()
   const {register: ownerRegister, handleSubmit: ownerHandleSubmit} =
     useForm<any>()
   const [selectedTeam, setSelectedTeam] = useState<ReactSelectState | null>()
+  const {timer, timeOut} = useTimer(boardInfo ? boardInfo!.timeLeft : 0)
+  const {register: joinBoardRegister, handleSubmit: joinBoardHandleSubmit} =
+    useForm<any>()
+  const {mutate: joinBoard} = useJoinBoard()
+  const [closeBoardModal, setCloseBoardModal] = useState<boolean>(false)
+  const {mutate: closeBoard} = useCloseBoard()
 
   useEffect(() => {
     if (teams && boardInfo?.retroBoard.teamId && boardInfo?.isOwner) {
@@ -54,6 +70,52 @@ const BoardPage = () => {
       })
     }
   }, [boardInfo?.isOwner, teams])
+
+  if (isLoadingBoard) {
+    return <div className="">Loading...</div>
+  }
+
+  const joinBoardSubmit = (data: {password: string}) => {
+    console.log(data)
+    joinBoard({
+      boardId: boardId ? boardId?.toString() : '',
+      password: data?.password,
+    })
+  }
+
+  if (isBoardError && boardError.response) {
+    if (boardError.response.status === 403) {
+      return (
+        <>
+          <Head>
+            <title>No permission to see board</title>
+          </Head>
+          <div className="bg-slate-100 dark:bg-slate-800 flex flex-col gap-3 max-w-2xl mt-52 lg:mt-28 mx-auto p-4 rounded-2xl duration-150 dark:text-white">
+            <h1 className="text-xl font-semibold">
+              Enter board password to Join this Retrospective
+            </h1>
+            <form onSubmit={joinBoardHandleSubmit(joinBoardSubmit)}>
+              <Input
+                type="password"
+                placeHolder="Enter Board Password..."
+                register={joinBoardRegister}
+                registerLabel="password"
+              />
+              <Button
+                type="submit"
+                style="primary"
+                applyDark={true}
+                size="md"
+                customStyle="font-semibold"
+              >
+                Join Board
+              </Button>
+            </form>
+          </div>
+        </>
+      )
+    }
+  }
 
   const submitForm = (data: any) => {
     const retroItemList: RetroItemCreate[] = []
@@ -86,6 +148,15 @@ const BoardPage = () => {
     })
   }
 
+  const closeBoardSubmit = () => {
+    if (boardId) {
+      closeBoard(boardId?.toString())
+    } else {
+      toast.error('Board not found')
+    }
+    setCloseBoardModal(false)
+  }
+
   const pageTitle = boardInfo?.retroBoard?.title
     ? boardInfo?.retroBoard?.title + ' - Retrospective Creator'
     : 'Retrospective Creator'
@@ -95,16 +166,34 @@ const BoardPage = () => {
       <Head>
         <title>{pageTitle}</title>
       </Head>
+      {closeBoardModal && (
+        <ConfirmModal
+          head="Close Board~"
+          onSubmit={closeBoardSubmit}
+          onCancel={() => {
+            setCloseBoardModal(false)
+          }}
+        >
+          Are you sure to Close this Board ? <br />
+          <span className="text-red-600">
+            *Other people will unable to send more comment
+          </span>
+        </ConfirmModal>
+      )}
       <main className="bg-slate-100 dark:bg-slate-800 flex flex-col gap-3 max-w-3xl mt-52 lg:mt-28 mx-auto p-4 rounded-2xl duration-150 dark:text-white">
         <header className="flex flex-col md:flex-row justify-between gap-2">
           <h1 className="text-2xl md:w-3/4 break-words font-semibold">
             {boardInfo?.retroBoard.title}
           </h1>
-          <div className="flex md:flex-col md:w-1/4 gap-2  font-semibold">
+          <div className="flex md:flex-col md:w-1/4 gap-2 font-semibold">
             <div className="flex gap-1 items-center">
               <div className="w-1/2">time left</div>{' '}
-              <div className="text-lg bg-slate-300 dark:bg-slate-900 px-2 rounded-lg w-1/2 text-center">
-                20:00
+              <div
+                className={`text-lg font-bold  text-white px-2 rounded-lg w-1/2 text-center ${
+                  !timeOut ? 'bg-green-400' : 'bg-red-600 '
+                }`}
+              >
+                {!timeOut ? timer : 'TimeOut'}
               </div>
             </div>
             <div className="flex gap-1 items-center">
@@ -121,6 +210,16 @@ const BoardPage = () => {
             <div className="text-lg bg-slate-300 dark:bg-slate-900 px-3 rounded-lg">
               {boardInfo?.retroBoard.creator.email}
             </div>
+            <div>Board Status</div>{' '}
+            {boardInfo?.retroBoard.opening ? (
+              <div className="text-lg dark:bg-slate-900 px-3 rounded-lg bg-green-600 text-white">
+                OPENING
+              </div>
+            ) : (
+              <div className="text-lg dark:bg-slate-900 px-3 rounded-lg bg-red-600 text-white">
+                CLOSED
+              </div>
+            )}
           </div>
           {boardInfo?.isOwner ? (
             <form
@@ -146,7 +245,9 @@ const BoardPage = () => {
                 placeHolder="update close time..."
                 register={ownerRegister}
                 registerLabel="endDate"
-                defaultValues={boardInfo?.retroBoard?.endDate.substring(0, 16)}
+                defaultValues={
+                  boardInfo?.retroBoard?.endDate?.substring(0, 16) ?? ''
+                }
               />
               <Input
                 label="Password"
@@ -209,15 +310,46 @@ const BoardPage = () => {
             registerLabel="TRY"
           />
 
-          <Button
-            type="submit"
-            style="primary"
-            size="md"
-            customStyle="font-semibold mt-12"
-            applyDark={true}
-          >
-            Send It!
-          </Button>
+          {timeOut ? (
+            <div className="flex flex-col md:flex-row gap-2 items-center">
+              {console.log(boardInfo)}
+              {boardInfo?.isOwner && (
+                <Button
+                  type="button"
+                  style="cancel"
+                  size="md"
+                  customStyle="font-semibold mt-12 w-full"
+                  applyDark={true}
+                  isDisabled={!boardInfo.retroBoard.opening}
+                  onClick={() => setCloseBoardModal(true)}
+                >
+                  Close Board
+                </Button>
+              )}
+
+              <Button
+                type="submit"
+                style="primary"
+                size="md"
+                customStyle="font-semibold mt-12 w-full"
+                applyDark={true}
+                isDisabled={timeOut}
+              >
+                Send It!
+              </Button>
+            </div>
+          ) : (
+            <Button
+              type="button"
+              style="primary"
+              size="md"
+              customStyle="font-semibold mt-12"
+              applyDark={true}
+              isDisabled={!timeOut}
+            >
+              See Result!!
+            </Button>
+          )}
         </form>
       </main>
     </>

@@ -2,6 +2,7 @@ import type {NextApiRequest, NextApiResponse} from 'next'
 import {getToken} from 'next-auth/jwt'
 import prisma from '../../../prisma'
 import bcrypt from 'bcrypt'
+import moment from 'moment'
 
 const secret = process.env.NEXTAUTH_SECRET
 
@@ -43,13 +44,15 @@ export default async function createBoard(
     password = await bcrypt.hash(password, saltRounds)
   }
 
+  const localTimeOffset = new Date(endDate).getTimezoneOffset()
+
   await prisma.retroBoard.create({
     data: {
       title,
       teamId,
       opening: true,
       password,
-      endDate,
+      endDate: new Date(endDate),
       anonymous,
       creatorId: user!.id,
     },

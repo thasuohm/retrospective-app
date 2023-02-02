@@ -1,6 +1,6 @@
 import type {NextApiRequest, NextApiResponse} from 'next'
 import {getToken} from 'next-auth/jwt'
-import prisma from '../../../prisma'
+import prisma from '../../../../prisma'
 import bcrypt from 'bcrypt'
 
 const secret = process.env.NEXTAUTH_SECRET

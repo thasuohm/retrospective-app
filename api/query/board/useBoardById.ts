@@ -1,8 +1,9 @@
+import {AxiosError} from 'axios'
 import {useQuery} from 'react-query'
 import retrospectiveService from '../../request/retrospective'
 
 const useBoardById = (boardId: string) => {
-  return useQuery(
+  return useQuery<any, AxiosError>(
     'get-board-by-id',
     () =>
       retrospectiveService.getRetrospectiveBoardById(boardId).then((res) => {
@@ -14,7 +15,11 @@ const useBoardById = (boardId: string) => {
         }
       }),
     {
+      onError: (error) => {
+        return error
+      },
       enabled: boardId ? true : false,
+      retry: 0,
     }
   )
 }
