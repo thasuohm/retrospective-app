@@ -8,6 +8,7 @@ const useCommentList = (boardId: string) => {
     'get-board-comment-list',
     () =>
       retrospectiveService.getRetrospectiveCommentList(boardId).then((res) => {
+        console.log(res.data.retroItem)
         return {
           retroItem: res.data.retroItem as RetroItem[],
         }

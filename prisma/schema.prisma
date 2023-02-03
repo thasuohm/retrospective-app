@@ -46,7 +46,6 @@ model User {
   createdAt       DateTime               @default(now())
   RetroBoard      RetroBoard[]
   RetroItem       RetroItem[]
-  RetroComment    RetroComment[]
   RetroEmoji      RetroEmoji[]
   RetroPermission RetroBoardPermission[]
 }
@@ -65,7 +64,6 @@ model RetroBoard {
   createdAt            DateTime               @default(now())
   updatedAt            DateTime               @updatedAt
   RetroItem            RetroItem[]
-  RetroComment         RetroComment[]
   RetroBoardPermission RetroBoardPermission[]
 }
 
@@ -87,21 +85,11 @@ model RetroItem {
   boardId    String       @db.ObjectId
   type       BoardType
   content    String
+  comment    String?
   pickup     Boolean      @default(false)
   createdAt  DateTime     @default(now())
   updatedAt  DateTime     @updatedAt
   RetroEmoji RetroEmoji[]
-}
-
-model RetroComment {
-  id          String     @id @default(auto()) @map("_id") @db.ObjectId
-  commenter   User       @relation(fields: [commenterId], references: [id])
-  commenterId String     @db.ObjectId
-  board       RetroBoard @relation(fields: [boardId], references: [id])
-  boardId     String     @db.ObjectId
-  comment     String
-  createdAt   DateTime   @default(now())
-  updatedAt   DateTime   @updatedAt
 }
 
 model RetroEmoji {

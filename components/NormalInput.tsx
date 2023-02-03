@@ -1,40 +1,32 @@
-import {UseFormRegister} from 'react-hook-form/dist/types'
-
 type InputProps = {
   id?: string
   label?: string
-  register: UseFormRegister<any>
+  onChange: (e) => void
   type: string
   placeHolder?: string
   isDisabled?: boolean
-  registerLabel: string
-  registerCustom?: any
   autoComplete?: string
-  defaultValues?: string | number
+  defaultValue?: string | number
   size?: 'sm' | 'md' | 'lg'
   customStyle?: string
   customInputStyle?: string
   errorMessage?: string
-  defaultChecked?: boolean
 }
 
-const Input: React.FC<InputProps> = (props) => {
+const NormalInput: React.FC<InputProps> = (props) => {
   const {
     label,
-    register,
+    onChange,
     id,
     type,
     placeHolder,
     isDisabled,
-    registerLabel,
-    registerCustom,
     autoComplete,
-    defaultValues,
+    defaultValue,
     size,
     customStyle,
     customInputStyle,
     errorMessage,
-    defaultChecked,
   } = props
 
   const switchSize = () => {
@@ -47,12 +39,8 @@ const Input: React.FC<InputProps> = (props) => {
   }
 
   return (
-    <label
-      className={`flex ${type !== 'checkbox' ? 'flex-col' : 'flex-row'} gap-2 ${
-        customStyle ?? ''
-      }`}
-    >
-      {type !== 'checkbox' && label}
+    <label className={`flex flex-col   gap-2 ${customStyle ?? ''}`}>
+      {label}
       <input
         className={`${switchSize()} ${
           customInputStyle ?? ''
@@ -62,17 +50,14 @@ const Input: React.FC<InputProps> = (props) => {
         type={type}
         placeholder={placeHolder}
         disabled={isDisabled}
-        {...register(registerLabel, registerCustom)}
+        onChange={onChange}
         autoComplete={autoComplete}
-        defaultValue={defaultValues}
-        defaultChecked={defaultChecked}
+        defaultValue={defaultValue}
       />
-      {type === 'checkbox' && label}
-      {errorMessage && (
-        <div className="text-red-500 font-semibold">{errorMessage}</div>
-      )}
+
+      <div className="text-red-500 font-semibold">{errorMessage}</div>
     </label>
   )
 }
 
-export default Input
+export default NormalInput
