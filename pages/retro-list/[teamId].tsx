@@ -27,7 +27,7 @@ const RetroListPage = (props: any) => {
       return toast.error('Please Login')
     }
 
-    router.push('/create-retro')
+    router.push('/board/create')
   }
 
   return (

@@ -2,7 +2,7 @@ import type {NextApiRequest, NextApiResponse} from 'next'
 import {getToken} from 'next-auth/jwt'
 import prisma from '../../../prisma'
 import bcrypt from 'bcrypt'
-import moment from 'moment'
+import {RetroBoardCreate} from '../../../types/request'
 
 const secret = process.env.NEXTAUTH_SECRET
 
@@ -22,7 +22,8 @@ export default async function createBoard(
     return res.status(403).send('Please login before create Board')
   }
 
-  let {title, teamId, password, endDate, anonymous} = req.body
+  let {title, teamId, password, endDate, anonymous} =
+    req.body as RetroBoardCreate
 
   if (!title) {
     return res.status(400).send('please define Board Title')
@@ -44,9 +45,7 @@ export default async function createBoard(
     password = await bcrypt.hash(password, saltRounds)
   }
 
-  const localTimeOffset = new Date(endDate).getTimezoneOffset()
-
-  await prisma.retroBoard.create({
+  const retroBoard = await prisma.retroBoard.create({
     data: {
       title,
       teamId,
@@ -58,5 +57,10 @@ export default async function createBoard(
     },
   })
 
-  res.status(200).json(`retro board: ${title} has been create!!`)
+  res
+    .status(200)
+    .json({
+      boardId: retroBoard.id,
+      message: `retro board: ${title} has been create!!`,
+    })
 }

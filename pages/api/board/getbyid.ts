@@ -73,7 +73,7 @@ export default async function handler(
     })
 
     if (!permission) {
-      return res.status(403).send({
+      return res.status(401).send({
         retroBoard: {
           title: retroBoard?.title,
           creator: {

@@ -24,7 +24,7 @@ const useTimer = (timeLeft: number) => {
   if (!timeLeft) {
     return {
       timer: '--:--:--',
-      timeOut: time <= 0 ? true : false,
+      timeOut: false,
     }
   }
 

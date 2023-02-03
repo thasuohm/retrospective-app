@@ -1,5 +1,5 @@
 import {RetroBoard, Team} from '@prisma/client'
-import {RetroItemCreate} from '../../types/request'
+import {RetroBoardCreate, RetroItemCreate} from '../../types/request'
 import axios from './axios'
 
 const getTeamList = () => {
@@ -34,8 +34,8 @@ const getClosedRetroBoardByTeam = ({
   })
 }
 
-const createRetrospectiveBoard = (boardInfo: RetroBoard) => {
-  return axios.post('/board/create', {...boardInfo, opening: true})
+const createRetrospectiveBoard = (boardInfo: RetroBoardCreate) => {
+  return axios.post('/board/create', {...boardInfo})
 }
 const updateRetrospectiveBoard = (boardId: string, boardInfo: RetroBoard) => {
   return axios.put('/board/update?id=' + boardId, boardInfo)

@@ -14,6 +14,8 @@ type InputProps = {
   size?: 'sm' | 'md' | 'lg'
   customStyle?: string
   customInputStyle?: string
+  errorMessage?: string
+  defaultChecked?: boolean
 }
 
 const Input: React.FC<InputProps> = (props) => {
@@ -31,6 +33,8 @@ const Input: React.FC<InputProps> = (props) => {
     size,
     customStyle,
     customInputStyle,
+    errorMessage,
+    defaultChecked,
   } = props
 
   const switchSize = () => {
@@ -43,8 +47,12 @@ const Input: React.FC<InputProps> = (props) => {
   }
 
   return (
-    <label className={`flex flex-col gap-2 ${customStyle ?? ''}`}>
-      {label}
+    <label
+      className={`flex ${type !== 'checkbox' ? 'flex-col' : 'flex-row'} gap-2 ${
+        customStyle ?? ''
+      }`}
+    >
+      {type !== 'checkbox' && label}
       <input
         className={`${switchSize()} ${
           customInputStyle ?? ''
@@ -57,7 +65,11 @@ const Input: React.FC<InputProps> = (props) => {
         {...register(registerLabel, registerCustom)}
         autoComplete={autoComplete}
         defaultValue={defaultValues}
+        defaultChecked={defaultChecked}
       />
+      {type === 'checkbox' && label}
+
+      <div className="text-red-500 font-semibold">{errorMessage}</div>
     </label>
   )
 }

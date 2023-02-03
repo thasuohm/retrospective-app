@@ -6,3 +6,11 @@ export interface RetroItemCreate {
   type: BoardType
   content: string
 }
+
+export interface RetroBoardCreate {
+  teamId: string
+  title: string
+  anonymous: boolean
+  endDate: string
+  password: string
+}

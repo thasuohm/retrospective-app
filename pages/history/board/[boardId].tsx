@@ -14,6 +14,7 @@ const HistoryByIdPage = () => {
 
   const {
     data: boardInfo,
+    isLoading,
     isError: isBoardError,
     error: boardError,
   } = useBoardById(boardId ? boardId?.toString() : '')
@@ -23,15 +24,19 @@ const HistoryByIdPage = () => {
   )
 
   const {register, handleSubmit} = useForm<any>()
-
-  if (isBoardError && boardError.response) {
-    if (boardError.response.status === 403) {
-      return <JoinBoardForm boardId={boardId ? boardId?.toString() : ''} />
-    }
-  }
-
   const submitComment = (data: any) => {
     console.log(data)
+  }
+
+  if (isBoardError && boardError.response) {
+    if (boardError.response.status === 401) {
+      return <JoinBoardForm boardId={boardId ? boardId?.toString() : ''} />
+    }
+    return <div>Loading...</div>
+  }
+
+  if (isLoading) {
+    return <div>Loading...</div>
   }
 
   return (
@@ -87,40 +92,56 @@ const HistoryByIdPage = () => {
             <header className="text-xl">See what we got</header>
           </div>
           <form onSubmit={handleSubmit(submitComment)}>
-            <table>
+            <table className="w-full">
               <thead>
-                <tr>
+                <tr className="hidden md:table-row">
                   {!boardInfo?.retroBoard.anonymous && <th>Sender</th>}
-
                   <th>Content</th>
-                  <th>Other</th>
-                  <th>Pin</th>
+                  <th>Comment</th>
                 </tr>
               </thead>
               <tbody>
                 {retroItemList &&
                   retroItemList.retroItem.map((item: any) => (
-                    <tr key={item.id}>
+                    <tr
+                      key={item.id}
+                      className="flex flex-col gap-1 md:table-row border-solid border-slate-200 dark:border-slate-700 border-b-2"
+                    >
                       {!boardInfo?.retroBoard.anonymous && (
-                        <td>{item.sender.email ?? 'Secret'}</td>
+                        <td className="w-full md:w-1/3 py-2">
+                          <span className="md:hidden text-xl font-bold text-red-600 mr-2">
+                            Sender:
+                          </span>
+                          {item.sender.email ?? 'Secret'}
+                        </td>
                       )}
-                      <td>{item.content}</td>
-                      <td>
+                      <td
+                        className={` w-full
+                          ${
+                            boardInfo?.retroBoard.anonymous
+                              ? 'md:w-1/2'
+                              : 'md:w-1/3'
+                          } py-2 tracking-wider
+                        `}
+                      >
+                        <span className="md:hidden text-xl font-bold text-red-600 mr-2">
+                          Content:
+                        </span>{' '}
+                        {item.content}
+                      </td>
+                      <td className="w-full md:w-1/3 py-2">
                         <Input
                           type="text"
                           placeHolder="comment..."
                           register={register}
                           registerLabel={item.id}
+                          size="sm"
                         />
                       </td>
                     </tr>
                   ))}
               </tbody>
             </table>
-
-            <Button type="submit" style="primary" size="md">
-              Save
-            </Button>
           </form>
         </section>
       </main>

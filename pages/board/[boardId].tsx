@@ -74,7 +74,7 @@ const BoardPage = () => {
   }
 
   if (isBoardError && boardError.response) {
-    if (boardError.response.status === 403) {
+    if (boardError.response.status === 401) {
       return <JoinBoardForm boardId={boardId ? boardId?.toString() : ''} />
     }
   }
@@ -276,9 +276,8 @@ const BoardPage = () => {
             registerLabel="TRY"
           />
 
-          {timeOut ? (
+          {!timeOut ? (
             <div className="flex flex-col md:flex-row gap-2 items-center">
-              {console.log(boardInfo)}
               {boardInfo?.isOwner && (
                 <Button
                   type="button"
