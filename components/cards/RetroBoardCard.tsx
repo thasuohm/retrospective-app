@@ -6,7 +6,7 @@ import {toast} from 'react-toastify'
 import Button from '../Button'
 
 const RetroBoardCard = (props: any) => {
-  const {id, title, opening, password, team, creator, endDate} =
+  const {id, title, opening, password, team, creator, createdAt, endDate} =
     props.retroBoard
   const {data: session} = useSession()
   const router = useRouter()
@@ -49,11 +49,15 @@ const RetroBoardCard = (props: any) => {
       <div className="bg-slate-300 w-full h-24 rounded-lg"></div>
       <main className="break-all flex flex-col gap-1">
         <div className="text-sm font-semibold">Title: {title}</div>
+        <div className="text-sm font-semibold">
+          Created:
+          {moment(createdAt).format('Do MMMM YY')}
+        </div>
         <div className="text-sm font-semibold">Creator: {creator.email}</div>
         <div className="text-sm font-semibold">Team: {team.name}</div>
         <div className="text-sm font-semibold">
           Expire:
-          {endDate ? moment(endDate).format('MMMM Do YYYY, h:mm') : 'None'}
+          {endDate ? moment(endDate).format('Do MMMM YY, hh:mm') : 'None'}
         </div>
 
         {opening ? (

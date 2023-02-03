@@ -7,6 +7,7 @@ import {toast} from 'react-toastify'
 import useBoardByTeam from '../../api/query/board/useBoardByTeam'
 import Button from '../../components/Button'
 import RetroBoardCard from '../../components/cards/RetroBoardCard'
+import NotFoundBox from '../../components/NotFoundBox'
 import prisma from '../../prisma'
 
 const RetroListPage = (props: any) => {
@@ -63,12 +64,15 @@ const RetroListPage = (props: any) => {
           </Button>
         </div>
 
-        <div className="flex flex-wrap gap-4 mx-auto w-full">
-          {boardList?.retroBoard &&
-            boardList?.retroBoard?.map((board) => (
+        {boardList?.retroBoard && boardList?.retroBoard.length > 0 ? (
+          <div className="flex flex-wrap gap-4 mx-auto w-full">
+            {boardList?.retroBoard?.map((board) => (
               <RetroBoardCard key={board.id} retroBoard={board} />
             ))}
-        </div>
+          </div>
+        ) : (
+          <NotFoundBox>No Board Opening Now~</NotFoundBox>
+        )}
       </main>
     </>
   )
@@ -79,10 +83,10 @@ export default RetroListPage
 export const getStaticProps: GetStaticProps = async (context) => {
   const {params} = context
 
-  const teamCode: string = params!.teamCode as string
+  const teamId: string = params!.teamId as string
 
   const teamInfo = await prisma.team.findUnique({
-    where: {id: teamCode?.toString()},
+    where: {id: teamId?.toString()},
   })
 
   if (!teamInfo) {
@@ -101,7 +105,7 @@ export const getStaticPaths: GetStaticPaths = async () => {
   const allTeam = await prisma.team.findMany().catch(() => [])
 
   const staticPath = allTeam?.map((team: Team) => {
-    return {params: {teamCode: team?.id}}
+    return {params: {teamId: team?.id}}
   })
 
   return {

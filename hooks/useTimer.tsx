@@ -1,4 +1,3 @@
-import moment from 'moment'
 import React, {useEffect, useState} from 'react'
 
 const useTimer = (timeLeft: number) => {
@@ -17,7 +16,6 @@ const useTimer = (timeLeft: number) => {
       }
     }, 1000)
 
-    console.log(time)
     return () => {
       clearTimeout(timer)
     }

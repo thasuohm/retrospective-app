@@ -1,4 +1,3 @@
-import {RetroItem} from '@prisma/client'
 import moment from 'moment'
 import Head from 'next/head'
 import {useRouter} from 'next/router'
@@ -6,7 +5,7 @@ import {useForm} from 'react-hook-form'
 import useBoardById from '../../../api/query/board/useBoardById'
 import useCommentList from '../../../api/query/board/useCommentList'
 import Button from '../../../components/Button'
-import JoinBoardForm from '../../../components/forms/joinBoardForm'
+import JoinBoardForm from '../../../components/forms/JoinBoardForm'
 import Input from '../../../components/Input'
 
 const HistoryByIdPage = () => {

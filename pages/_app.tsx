@@ -11,8 +11,8 @@ config.autoAddCss = false
 import {Hydrate, QueryClient, QueryClientProvider} from 'react-query'
 import AuthProvider from '../components/AuthProvider'
 
+const queryClient = new QueryClient()
 export default function App({Component, pageProps}: AppProps) {
-  const queryClient = new QueryClient()
   return (
     <AuthProvider>
       <QueryClientProvider client={queryClient}>

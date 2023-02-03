@@ -22,7 +22,7 @@ import {authOptions} from '../api/auth/[...nextauth]'
 import useTimer from '../../hooks/useTimer'
 import ConfirmModal from '../../components/Modal/ConfirmModal'
 import useCloseBoard from '../../api/query/board/useCloseBoard'
-import JoinBoardForm from '../../components/forms/joinBoardForm'
+import JoinBoardForm from '../../components/forms/JoinBoardForm'
 
 const BoardPage = () => {
   const router = useRouter()

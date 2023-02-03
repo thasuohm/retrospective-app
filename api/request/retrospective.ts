@@ -15,7 +15,18 @@ const getTeam = (id: string) => {
 }
 
 const getRetroBoardByTeam = (teamId: string) => {
-  return axios.get('/board/getbyteamid?id=' + teamId)
+  return axios.get('/board/team/' + teamId)
+}
+
+const getClosedRetroBoardByTeam = (
+  teamId: string,
+  month: string = '',
+  year: string = '',
+  page: number = 1
+) => {
+  return axios.get('/board/team/' + teamId, {
+    params: {opening: false, month, year, page},
+  })
 }
 
 const createRetrospectiveBoard = (boardInfo: RetroBoard) => {
@@ -55,6 +66,7 @@ const retrospectiveService = {
   addTeam,
   getTeam,
   getRetroBoardByTeam,
+  getClosedRetroBoardByTeam,
   createRetrospectiveBoard,
   updateRetrospectiveBoard,
   getRetrospectiveBoardById,

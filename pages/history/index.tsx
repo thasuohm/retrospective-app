@@ -1,3 +1,4 @@
+import moment from 'moment'
 import {useSession} from 'next-auth/react'
 import {useRouter} from 'next/router'
 import React, {useEffect} from 'react'
@@ -10,7 +11,7 @@ const HistoryIndexPage = () => {
 
   useEffect(() => {
     if (session && user && user.teamId) {
-      router.push(`/history/${user.teamId}`)
+      router.push(`/history/${user.teamId}/${moment().year()}`)
     }
   }, [router, session, user])
 
