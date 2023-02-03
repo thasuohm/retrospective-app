@@ -22,9 +22,18 @@ export default function SocketHandler(req: any, res: any) {
 
     socket.on(
       'updateBoard',
-      ({boardId, alert = true}: {boardId: string; alert?: boolean}) => {
+      ({
+        boardId,
+        alert = true,
+        teamId,
+      }: {
+        boardId: string
+        alert?: boolean
+        teamId?: string
+      }) => {
         socket.broadcast.emit('boardUpdate', {
           boardId,
+          teamId,
           alert,
         })
       }

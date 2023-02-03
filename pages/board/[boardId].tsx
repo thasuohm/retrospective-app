@@ -70,8 +70,8 @@ const BoardPage = () => {
     if (socket) {
       socket.on(
         'boardUpdate',
-        ({boardId, alert}: {boardId: string; alert?: boolean}) => {
-          if (boardId === boardInfo?.retroBoard.id) {
+        ({boardId: boardSocket, alert}: {boardId: string; alert?: boolean}) => {
+          if (boardSocket === boardId) {
             queryClient.invalidateQueries('get-board-by-id')
             if (alert) {
               toast.success('Board has been Update')
@@ -85,7 +85,7 @@ const BoardPage = () => {
       socket?.off('connect')
       socket?.off('disconnect')
     }
-  }, [socket, queryClient, boardInfo?.retroBoard.id])
+  }, [socket, queryClient, boardId])
 
   const teamListOption = useMemo(() => {
     if (boardInfo?.isOwner) {
@@ -269,9 +269,11 @@ const BoardPage = () => {
               <div className="flex gap-2 items-center">
                 <div>End At</div>{' '}
                 <div className="text-lg bg-slate-300 dark:bg-slate-900 px-2 rounded-lg">
-                  {moment(boardInfo?.retroBoard.endDate).format(
-                    'MMMM Do YYYY, h:mm a'
-                  ) ?? 'This web gone XD'}
+                  {boardInfo?.retroBoard.endDate
+                    ? moment
+                        .utc(boardInfo?.retroBoard.endDate)
+                        .format('MMMM Do YYYY, h:mm a')
+                    : 'This web gone XD'}
                 </div>
               </div>
             </div>
@@ -305,23 +307,21 @@ const BoardPage = () => {
             register={register}
             registerLabel="TRY"
           />
-
-          {!timeOut && boardInfo.retroBoard.opening ? (
-            <div className="flex flex-col md:flex-row gap-2 items-center">
-              {boardInfo?.isOwner && (
-                <Button
-                  type="button"
-                  style="cancel"
-                  size="md"
-                  customStyle="font-semibold mt-12 w-full"
-                  applyDark={true}
-                  isDisabled={!boardInfo.retroBoard.opening}
-                  onClick={() => setCloseBoardModal(true)}
-                >
-                  Close Board
-                </Button>
-              )}
-
+          <div className="flex flex-col md:flex-row gap-2 items-center">
+            {boardInfo?.isOwner && (
+              <Button
+                type="button"
+                style="cancel"
+                size="md"
+                customStyle="font-semibold mt-12 w-full"
+                applyDark={true}
+                isDisabled={!boardInfo.retroBoard.opening}
+                onClick={() => setCloseBoardModal(true)}
+              >
+                Close Board
+              </Button>
+            )}
+            {!timeOut && boardInfo.retroBoard.opening ? (
               <Button
                 type="submit"
                 style="primary"
@@ -332,18 +332,18 @@ const BoardPage = () => {
               >
                 Send It!
               </Button>
-            </div>
-          ) : (
-            <LinkButton
-              href={`/history/board/${boardInfo?.retroBoard?.id}`}
-              style="primary"
-              size="md"
-              customStyle="font-semibold mt-12"
-              applyDark={true}
-            >
-              See Result!!
-            </LinkButton>
-          )}
+            ) : (
+              <LinkButton
+                href={`/history/board/${boardInfo?.retroBoard?.id}`}
+                style="primary"
+                size="md"
+                customStyle="font-semibold mt-12 w-full"
+                applyDark={true}
+              >
+                See Result!!
+              </LinkButton>
+            )}
+          </div>
         </form>
       </main>
     </>

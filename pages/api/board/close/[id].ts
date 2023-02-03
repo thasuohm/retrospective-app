@@ -53,6 +53,7 @@ export default async function closeBoard(
 
   res.status(200).json({
     boardId: boardInfo.id,
+    teamId: boardInfo.teamId,
     message: `retro board: ${id} has been close!!`,
   })
 }

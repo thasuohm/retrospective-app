@@ -22,6 +22,7 @@ export default function App({Component, pageProps}: AppProps) {
             <ThemeProvider>
               <ToastContainer
                 bodyClassName={`${fiveYearsOldFont.variable} ${sanamDeklen.variable} font-five-yearsold font-semibold`}
+                limit={3}
               />
               <main
                 className={`duration-200 ${fiveYearsOldFont.variable} ${sanamDeklen.variable} font-five-yearsold `}

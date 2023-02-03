@@ -27,13 +27,19 @@ const RetroListPage = (props: any) => {
       socket.on('refetchBoardList', (data: string) => {
         queryClient.invalidateQueries('get-board-by-team')
       })
+
+      socket.on('boardUpdate', ({teamId}: {teamId: string}) => {
+        if (teamInfo?.id === teamId) {
+          queryClient.invalidateQueries('get-board-by-team')
+        }
+      })
     }
 
     return () => {
       socket?.off('connect')
       socket?.off('disconnect')
     }
-  }, [queryClient, socket])
+  }, [queryClient, socket, teamInfo?.id])
 
   if (!teamInfo) {
     return <p>Loading...</p>

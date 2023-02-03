@@ -11,7 +11,7 @@ const addTeam = (team: Team) => {
 }
 
 const getTeam = (id: string) => {
-  return axios.get('/team-list/getbyid?id=' + id)
+  return axios.get('/team-list/' + id)
 }
 
 const getRetroBoardByTeam = (teamId: string) => {
@@ -38,10 +38,10 @@ const createRetrospectiveBoard = (boardInfo: RetroBoardCreate) => {
   return axios.post('/board/create', {...boardInfo})
 }
 const updateRetrospectiveBoard = (boardId: string, boardInfo: RetroBoard) => {
-  return axios.put('/board/update?id=' + boardId, boardInfo)
+  return axios.put('/board/update/' + boardId, boardInfo)
 }
 const getRetrospectiveBoardById = (boardId: string) => {
-  return axios.get('/board/getbyid?id=' + boardId)
+  return axios.get('/board/' + boardId)
 }
 
 const closeRetrospectiveBoard = (boardId: string) => {

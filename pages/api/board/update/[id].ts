@@ -1,13 +1,16 @@
 import type {NextApiRequest, NextApiResponse} from 'next'
 import {getToken} from 'next-auth/jwt'
-import prisma from '../../../prisma'
+import prisma from '../../../../prisma'
+import bcrypt from 'bcrypt'
 
 const secret = process.env.NEXTAUTH_SECRET
 
-export default async function closeBoard(
+export default async function updateBoard(
   req: NextApiRequest,
   res: NextApiResponse
 ) {
+  const saltRounds = 11
+
   if (req.method !== 'PUT') {
     return res.status(405).send('Only Put requests allowed')
   }
@@ -15,7 +18,13 @@ export default async function closeBoard(
   const token = await getToken({req, secret})
 
   if (!token) {
-    return res.status(403).send('Please login')
+    return res.status(403).send('Please login before create Board')
+  }
+
+  let {teamId, password, endDate} = req.body
+
+  if (!teamId) {
+    return res.status(400).send('please select Team for this Board!')
   }
 
   const {id} = req.query
@@ -40,16 +49,22 @@ export default async function closeBoard(
     return res.status(403).send('You are not Owner of this Board')
   }
 
-  if (!boardInfo.opening) {
-    return res.status(302).json('This Board already Close')
+  if (password || password !== '') {
+    password = await bcrypt.hash(password, saltRounds)
   }
 
   await prisma.retroBoard.update({
     where: {id: id?.toString()},
     data: {
-      opening: false,
+      teamId,
+      password,
+      endDate: new Date(endDate),
     },
   })
 
-  res.status(200).json(`retro board: ${id} has been close!!`)
+  res.status(200).json({
+    boardId: boardInfo?.id,
+    teamId: boardInfo.teamId,
+    message: `retro board: ${id} has been update!!`,
+  })
 }

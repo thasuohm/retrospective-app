@@ -7,7 +7,10 @@ const useCloseBoard = () => {
   const {socket}: any = useSocket()
   return useMutation(retrospectiveService.closeRetrospectiveBoard, {
     onSuccess: (res) => {
-      socket.emit('updateBoard', {boardId: res.data.boardId})
+      socket.emit('updateBoard', {
+        boardId: res.data.boardId,
+        teamId: res.data.teamId,
+      })
       queryClient.invalidateQueries('get-board-by-id')
     },
   })

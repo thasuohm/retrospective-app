@@ -10,9 +10,6 @@ import useUserChangeTeam from '../api/query/user/useUserChangeTeam'
 import {useSession} from 'next-auth/react'
 import useUser from '../api/query/user/useUser'
 import {Team} from '@prisma/client'
-import {useSocket} from '../contexts/socket'
-import {SocketType} from 'dgram'
-import {Socket} from 'socket.io'
 
 export default function Home() {
   const {data: teams} = useTeamList()
@@ -24,19 +21,6 @@ export default function Home() {
   const [selectedTeam, setSelectedTeam] = useState<ReactSelectState | null>(
     null
   )
-
-  const {socket}: any = useSocket()
-
-  const emitBtn = () => {
-    socket.emit('hello', () => {})
-  }
-
-  useEffect(() => {
-    return () => {
-      socket?.off('connect')
-      socket?.off('disconnect')
-    }
-  }, [socket])
 
   useEffect(() => {
     if (router?.query.requireAuth) {
@@ -79,7 +63,6 @@ export default function Home() {
         <title>Choose your team - Retro Creator</title>
       </Head>
       <main className="flex flex-col gap-4 max-w-3xl justify-center mx-auto h-screen px-3 lg:px-0">
-        <button onClick={emitBtn}>click me</button>
         <div className="p-4 flex flex-col gap-4 justify-center rounded-lg">
           <h1 className="font-semibold font-sanam-deklen tracking-widest text-2xl text-center dark:text-white">
             Choose your Team

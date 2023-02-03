@@ -12,7 +12,10 @@ const useUpdateBoard = () => {
     {
       onSuccess: (res) => {
         queryClient.invalidateQueries('get-board-by-id')
-        socket.emit('updateBoard', {boardId: res.data.boardId})
+        socket.emit('updateBoard', {
+          boardId: res.data.boardId,
+          teamId: res.data.teamId,
+        })
       },
     }
   )
