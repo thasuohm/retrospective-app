@@ -65,7 +65,6 @@ const getRetrospectiveCommentList = (boardId: string) => {
 const getRetroHistory = () => {}
 
 const commentHistoryRetrospective = (itemId: string, comment: string) => {
-  console.log(comment)
   return axios.put('/board/comment/' + itemId, {comment})
 }
 const emojiRetrospective = () => {}

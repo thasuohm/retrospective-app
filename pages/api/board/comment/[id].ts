@@ -35,14 +35,40 @@ export default async function commentHistory(
 
   const boardInfo = await prisma.retroBoard.findUnique({
     where: {id: retroItem?.boardId?.toString()},
+    include: {
+      creator: {
+        select: {
+          email: true,
+        },
+      },
+      team: true,
+    },
   })
 
   if (!boardInfo) {
     return res.status(404).json({message: 'Board not found'})
   }
 
-  if (user!.id !== boardInfo?.creatorId) {
-    return res.status(403).send({message: 'You are not Owner of this Board'})
+  if (
+    user.id !== boardInfo!.creatorId &&
+    boardInfo!.password !== null &&
+    boardInfo!.password !== ''
+  ) {
+    const permission = await prisma.retroBoardPermission.findFirst({
+      where: {boardId: boardInfo!.id, userId: user!.id},
+    })
+
+    if (!permission) {
+      return res.status(401).send({
+        boardInfo: {
+          title: boardInfo?.title,
+          creator: {
+            email: boardInfo?.creator?.email,
+          },
+        },
+        message: 'Please enter password of this board before join',
+      })
+    }
   }
 
   const item = await prisma.retroItem.update({
@@ -51,8 +77,6 @@ export default async function commentHistory(
       comment: comment?.toString(),
     },
   })
-
-  console.log(item, comment)
 
   res.status(200).json({message: `${id} comment has been add!!`})
 }

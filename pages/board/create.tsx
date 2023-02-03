@@ -4,6 +4,7 @@ import {useSession} from 'next-auth/react'
 import Head from 'next/head'
 import React, {useEffect, useMemo, useState} from 'react'
 import {useForm} from 'react-hook-form'
+import {useQueryClient} from 'react-query'
 import Select from 'react-select'
 import {toast} from 'react-toastify'
 import useCreateBoard from '../../api/query/board/useCreateBoard'
@@ -12,6 +13,7 @@ import useUser from '../../api/query/user/useUser'
 import Button from '../../components/Button'
 import Input from '../../components/Input'
 import ConfirmModal from '../../components/Modal/ConfirmModal'
+import {useSocket} from '../../contexts/socket'
 import {ReactSelectState} from '../../types/components'
 import {RetroBoardCreate} from '../../types/request'
 
@@ -30,7 +32,8 @@ const CreateRetroPage = () => {
   )
   const [createBoardModal, setCreateBoardModal] = useState<boolean>(false)
   const {data: teams} = useTeamList()
-  const {mutate: createBoard} = useCreateBoard()
+  const {mutate: createBoard, isSuccess} = useCreateBoard()
+  const {socket}: any = useSocket()
 
   useEffect(() => {
     if (user && teams) {
@@ -71,6 +74,12 @@ const CreateRetroPage = () => {
     createBoard({...data, teamId: selectedTeam!.value})
     setCreateBoardModal(false)
   }
+
+  useEffect(() => {
+    if (isSuccess) {
+      socket.emit('createBoard', () => {})
+    }
+  }, [isSuccess, socket])
 
   return (
     <>

@@ -44,7 +44,8 @@ export default async function sendItem(
 
   if (
     user.id !== boardInfo.creatorId &&
-    (boardInfo!.password !== null || boardInfo!.password !== '')
+    boardInfo!.password !== null &&
+    boardInfo!.password !== ''
   ) {
     const permission = await prisma.retroBoardPermission.findFirst({
       where: {boardId: boardInfo!.id, userId: user!.id},
@@ -52,7 +53,7 @@ export default async function sendItem(
 
     if (!permission) {
       return res
-        .status(403)
+        .status(401)
         .send('Please enter password of this board before access')
     }
   }
@@ -61,5 +62,8 @@ export default async function sendItem(
     data: item,
   })
 
-  res.status(200).json(`your Retro comment has been sent!!`)
+  res.status(200).json({
+    boardId: boardInfo.id,
+    message: `your Retro comment has been sent!!`,
+  })
 }

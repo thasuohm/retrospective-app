@@ -6,7 +6,6 @@ export interface ButtonProps {
   id?: string
   href: string
   children: ReactNode
-  type: 'button' | 'submit' | 'reset'
   style: 'primary' | 'secondary' | 'cancel'
   size: string
   customStyle?: string
@@ -14,7 +13,7 @@ export interface ButtonProps {
 }
 
 const LinkButton: React.FC<ButtonProps> = (props) => {
-  const {id, type, style, children, size, href, customStyle, applyDark} = props
+  const {id, style, children, size, href, customStyle, applyDark} = props
 
   const styleSwitch = () => {
     switch (style) {
@@ -46,8 +45,7 @@ const LinkButton: React.FC<ButtonProps> = (props) => {
     <Link
       href={href}
       id={id}
-      type={type}
-      className={`${styleSwitch()} ${sizeSwitch()} ${customStyle} hover:opacity-80 duration-150`}
+      className={`${styleSwitch()} ${sizeSwitch()} ${customStyle} hover:opacity-80 duration-150 text-center`}
     >
       {children}
     </Link>

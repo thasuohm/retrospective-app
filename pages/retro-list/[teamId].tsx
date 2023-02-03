@@ -3,11 +3,14 @@ import {GetStaticPaths, GetStaticProps} from 'next'
 import {useSession} from 'next-auth/react'
 import Head from 'next/head'
 import {useRouter} from 'next/router'
+import {useEffect} from 'react'
+import {useQueryClient} from 'react-query'
 import {toast} from 'react-toastify'
 import useBoardByTeam from '../../api/query/board/useBoardByTeam'
 import Button from '../../components/Button'
 import RetroBoardCard from '../../components/cards/RetroBoardCard'
 import NotFoundBox from '../../components/NotFoundBox'
+import {useSocket} from '../../contexts/socket'
 import prisma from '../../prisma'
 
 const RetroListPage = (props: any) => {
@@ -15,6 +18,22 @@ const RetroListPage = (props: any) => {
   const router = useRouter()
   const {data: boardList} = useBoardByTeam(teamInfo?.id)
   const {data: session} = useSession()
+  const queryClient = useQueryClient()
+
+  const {socket}: any = useSocket()
+
+  useEffect(() => {
+    if (socket) {
+      socket.on('refetchBoardList', (data: string) => {
+        queryClient.invalidateQueries('get-board-by-team')
+      })
+    }
+
+    return () => {
+      socket?.off('connect')
+      socket?.off('disconnect')
+    }
+  }, [queryClient, socket])
 
   if (!teamInfo) {
     return <p>Loading...</p>

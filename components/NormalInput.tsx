@@ -7,6 +7,7 @@ type InputProps = {
   isDisabled?: boolean
   autoComplete?: string
   defaultValue?: string | number
+  value?: string | number
   size?: 'sm' | 'md' | 'lg'
   customStyle?: string
   customInputStyle?: string
@@ -23,6 +24,7 @@ const NormalInput: React.FC<InputProps> = (props) => {
     isDisabled,
     autoComplete,
     defaultValue,
+    value,
     size,
     customStyle,
     customInputStyle,
@@ -53,6 +55,7 @@ const NormalInput: React.FC<InputProps> = (props) => {
         onChange={onChange}
         autoComplete={autoComplete}
         defaultValue={defaultValue}
+        value={value}
       />
 
       <div className="text-red-500 font-semibold">{errorMessage}</div>

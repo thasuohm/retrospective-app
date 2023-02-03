@@ -11,6 +11,8 @@ import useCommentList from '../../../api/query/board/useCommentList'
 import retrospectiveService from '../../../api/request/retrospective'
 import JoinBoardForm from '../../../components/forms/JoinBoardForm'
 import NormalInput from '../../../components/NormalInput'
+import {useSocket} from '../../../contexts/socket'
+import {useForceUpdate} from '../../../hooks/useForceUpdate'
 
 const HistoryByIdPage = () => {
   const queryClient = useQueryClient()
@@ -32,6 +34,26 @@ const HistoryByIdPage = () => {
     comment: string
   } | null>(null)
 
+  const {socket}: any = useSocket()
+
+  useEffect(() => {
+    if (socket) {
+      socket.on(
+        'commentUpdate',
+        ({boardId: boardSocket}: {boardId: string}) => {
+          if (boardSocket === boardId) {
+            queryClient.invalidateQueries('get-board-comment-list')
+          }
+        }
+      )
+    }
+
+    return () => {
+      socket?.off('connect')
+      socket?.off('disconnect')
+    }
+  }, [socket, queryClient, boardId])
+
   useEffect(() => {
     const debounce = setTimeout(async () => {
       if (commentingItem) {
@@ -42,13 +64,17 @@ const HistoryByIdPage = () => {
           )
           .then(() => {
             toast.success('Comment has been save')
+            socket.emit('updateComment', {boardId})
             queryClient.invalidateQueries('get-board-comment-list')
+          })
+          .catch((err) => {
+            toast.error(err?.response?.data.message)
           })
       }
     }, 1000)
 
     return () => clearTimeout(debounce)
-  }, [commentingItem, queryClient])
+  }, [boardId, commentingItem, queryClient, socket])
 
   if (isBoardError && boardError.response) {
     if (boardError.response.status === 401) {
@@ -180,22 +206,18 @@ const HistoryByIdPage = () => {
                           {item.content}
                         </td>
                         <td className="w-full md:w-1/3 py-2">
-                          {boardInfo.isOwner ? (
-                            <NormalInput
-                              type="text"
-                              placeHolder="comment..."
-                              onChange={(e) => {
-                                setCommentingItem({
-                                  id: item.id,
-                                  comment: e.target.value,
-                                })
-                              }}
-                              size="sm"
-                              defaultValue={item.comment ?? ''}
-                            />
-                          ) : (
-                            <>{item.comment ?? ''}</>
-                          )}
+                          <NormalInput
+                            type="text"
+                            placeHolder="comment..."
+                            onChange={(e) => {
+                              setCommentingItem({
+                                id: item.id,
+                                comment: e.target.value,
+                              })
+                            }}
+                            size="sm"
+                            defaultValue={item.comment ?? ''}
+                          />
                         </td>
                       </tr>
                     ))}

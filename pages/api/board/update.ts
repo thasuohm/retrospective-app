@@ -54,8 +54,6 @@ export default async function updateBoard(
     password = await bcrypt.hash(password, saltRounds)
   }
 
-  const localTimeOffset = new Date(endDate).getTimezoneOffset()
-
   await prisma.retroBoard.update({
     where: {id: id?.toString()},
     data: {
@@ -65,5 +63,8 @@ export default async function updateBoard(
     },
   })
 
-  res.status(200).json(`retro board: ${id} has been update!!`)
+  res.status(200).json({
+    boardId: boardInfo?.id,
+    message: `retro board: ${id} has been update!!`,
+  })
 }

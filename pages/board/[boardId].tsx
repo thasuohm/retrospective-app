@@ -23,6 +23,9 @@ import useTimer from '../../hooks/useTimer'
 import ConfirmModal from '../../components/Modal/ConfirmModal'
 import useCloseBoard from '../../api/query/board/useCloseBoard'
 import JoinBoardForm from '../../components/forms/JoinBoardForm'
+import {useSocket} from '../../contexts/socket'
+import {useQueryClient} from 'react-query'
+import LinkButton from '../../components/LinkButton'
 
 const BoardPage = () => {
   const router = useRouter()
@@ -48,6 +51,8 @@ const BoardPage = () => {
   const {timer, timeOut} = useTimer(boardInfo ? boardInfo!.timeLeft : 0)
   const [closeBoardModal, setCloseBoardModal] = useState<boolean>(false)
   const {mutate: closeBoard} = useCloseBoard()
+  const queryClient = useQueryClient()
+  const {socket}: any = useSocket()
 
   useEffect(() => {
     if (teams && boardInfo?.retroBoard.teamId && boardInfo?.isOwner) {
@@ -60,6 +65,27 @@ const BoardPage = () => {
       }
     }
   }, [teams, boardInfo?.retroBoard.teamId, boardInfo?.isOwner])
+
+  useEffect(() => {
+    if (socket) {
+      socket.on(
+        'boardUpdate',
+        ({boardId, alert}: {boardId: string; alert?: boolean}) => {
+          if (boardId === boardInfo?.retroBoard.id) {
+            queryClient.invalidateQueries('get-board-by-id')
+            if (alert) {
+              toast.success('Board has been Update')
+            }
+          }
+        }
+      )
+    }
+
+    return () => {
+      socket?.off('connect')
+      socket?.off('disconnect')
+    }
+  }, [socket, queryClient, boardInfo?.retroBoard.id])
 
   const teamListOption = useMemo(() => {
     if (boardInfo?.isOwner) {
@@ -80,6 +106,10 @@ const BoardPage = () => {
   }
 
   const submitForm = (data: any) => {
+    if (!boardInfo.retroBoard.opening) {
+      return toast.error('This Board was Close :(')
+    }
+
     const retroItemList: RetroItemCreate[] = []
 
     Object.keys(data).forEach((key) => {
@@ -276,7 +306,7 @@ const BoardPage = () => {
             registerLabel="TRY"
           />
 
-          {!timeOut ? (
+          {!timeOut && boardInfo.retroBoard.opening ? (
             <div className="flex flex-col md:flex-row gap-2 items-center">
               {boardInfo?.isOwner && (
                 <Button
@@ -298,22 +328,21 @@ const BoardPage = () => {
                 size="md"
                 customStyle="font-semibold mt-12 w-full"
                 applyDark={true}
-                isDisabled={timeOut}
+                isDisabled={timeOut || !boardInfo.retroBoard.opening}
               >
                 Send It!
               </Button>
             </div>
           ) : (
-            <Button
-              type="button"
+            <LinkButton
+              href={`/history/board/${boardInfo?.retroBoard?.id}`}
               style="primary"
               size="md"
               customStyle="font-semibold mt-12"
               applyDark={true}
-              isDisabled={!timeOut}
             >
               See Result!!
-            </Button>
+            </LinkButton>
           )}
         </form>
       </main>
