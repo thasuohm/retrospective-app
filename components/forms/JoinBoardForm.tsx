@@ -16,7 +16,6 @@ const JoinBoardForm = ({boardId}: {boardId: string}) => {
   const {mutate: joinBoard, error: joinBoardError} = useJoinBoard()
 
   const joinBoardSubmit = (data: {password: string}) => {
-    console.log(data)
     joinBoard({
       boardId: boardId ? boardId?.toString() : '',
       password: data?.password,

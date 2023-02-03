@@ -18,14 +18,19 @@ const getRetroBoardByTeam = (teamId: string) => {
   return axios.get('/board/team/' + teamId)
 }
 
-const getClosedRetroBoardByTeam = (
-  teamId: string,
-  month: string = '',
-  year: string = '',
-  page: number = 1
-) => {
+const getClosedRetroBoardByTeam = ({
+  teamId,
+  year = '',
+  month = '',
+  page = 1,
+}: {
+  teamId: string
+  year: string
+  month: string
+  page: number
+}) => {
   return axios.get('/board/team/' + teamId, {
-    params: {opening: false, month, year, page},
+    params: {opening: false, year, month, page},
   })
 }
 

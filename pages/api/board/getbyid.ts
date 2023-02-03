@@ -58,7 +58,6 @@ export default async function handler(
 
   if (retroBoard?.endDate) {
     const now = moment()
-    console.log(now, moment(retroBoard?.endDate))
     timeLeft = moment(retroBoard?.endDate).diff(now, 'seconds')
 
     localTimeOffset = new Date(retroBoard?.endDate).getTimezoneOffset()

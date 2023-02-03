@@ -17,8 +17,6 @@ export default async function handler(
     res.status(500).json('No team in query')
   }
 
-  console.log(year, month, 'hello')
-
   const mockEndDate = `${
     !year || isNaN(+year) || year!.length < 1 ? '3000' : year
   }-${

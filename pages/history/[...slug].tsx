@@ -1,10 +1,8 @@
 import {RetroBoard, Team} from '@prisma/client'
-import {GetServerSideProps, GetStaticPaths, GetStaticProps} from 'next'
-import {useSession} from 'next-auth/react'
+import {GetServerSideProps} from 'next'
 import Head from 'next/head'
 import {useRouter} from 'next/router'
 import {useForm} from 'react-hook-form'
-import {toast} from 'react-toastify'
 import useClosedBoardByTeam from '../../api/query/board/useClosedBoardByTeam'
 import Button from '../../components/Button'
 import RetroBoardCard from '../../components/cards/RetroBoardCard'
@@ -16,30 +14,20 @@ import Select from 'react-select'
 import moment from 'moment'
 import {useState} from 'react'
 import {ReactSelectState} from '../../types/components'
-import {dehydrate, QueryClient, useQuery} from 'react-query'
+import {dehydrate, QueryClient} from 'react-query'
 import retrospectiveService from '../../api/request/retrospective'
 
-const RetroListPage = (props: {query: any; teamInfo: Team}) => {
-  const {query, teamInfo} = props
-  const teamId = query[0]
-  const year = query[1]
-  const month = query[2]
-  const page = query[3]
+const RetroListPage = (props: {
+  teamId: string
+  year: string
+  month: string
+  page: number
+  teamInfo: Team
+}) => {
+  const {teamId, year, month, page, teamInfo} = props
 
   const router = useRouter()
-  const {data: boardList, refetch} = useQuery('get-close-board-by-team', () =>
-    retrospectiveService
-      .getClosedRetroBoardByTeam(teamId, month, year, page)
-      .then((res) => {
-        console.log(teamId, month, year, page)
-        return {
-          retroBoard: res.data.retroBoard as RetroBoard[],
-          retroBoardCount: res?.data?.retroBoardCount as number,
-        }
-      })
-  )
-
-  console.log(boardList)
+  const {data: boardList} = useClosedBoardByTeam(teamId, year, month, page)
 
   const {register, handleSubmit} = useForm()
   const [selectedMonth, setSelectedMonth] = useState<ReactSelectState | null>({
@@ -101,7 +89,7 @@ const RetroListPage = (props: {query: any; teamInfo: Team}) => {
 
               <Input
                 type="number"
-                defaultValues={query[1] ?? moment().year()}
+                defaultValues={year ?? moment().year()}
                 register={register}
                 registerCustom={{maxLength: 4}}
                 registerLabel="year"
@@ -142,15 +130,15 @@ export default RetroListPage
 export const getServerSideProps: GetServerSideProps = async (context) => {
   const query = context.query.slug
   const teamId = query![0] as string
-  const year = query![1] as string
-  const month = query![2] as string
-  const page = +query![3] as number
+  const year = (query![1] ?? '') as string
+  const month = (query![2] ?? '') as string
+  const page = (+query![3] ?? 1) as number
 
   const queryClient = new QueryClient()
 
   await queryClient.prefetchQuery('get-close-board-by-team', () =>
     retrospectiveService
-      .getClosedRetroBoardByTeam(teamId, month, year, page)
+      .getClosedRetroBoardByTeam({teamId, month, year, page})
       .then((res) => {
         return {
           retroBoard: res.data.retroBoard as RetroBoard[],
@@ -170,6 +158,13 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
   }
 
   return {
-    props: {dehydratedState: dehydrate(queryClient), query, teamInfo},
+    props: {
+      dehydratedState: dehydrate(queryClient),
+      teamId,
+      year,
+      month,
+      page,
+      teamInfo,
+    },
   }
 }

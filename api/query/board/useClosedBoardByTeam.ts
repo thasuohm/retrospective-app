@@ -10,9 +10,13 @@ const useClosedBoardByTeam = (
 ) => {
   return useQuery('get-close-board-by-team', () =>
     retrospectiveService
-      .getClosedRetroBoardByTeam(teamId, month, year, page)
+      .getClosedRetroBoardByTeam({
+        teamId,
+        year: year ?? '',
+        month: month ?? '',
+        page: page ?? 1,
+      })
       .then((res) => {
-        console.log(res?.data?.retroBoard)
         return {
           retroBoard: res.data.retroBoard as RetroBoard[],
           retroBoardCount: res?.data?.retroBoardCount as number,
