@@ -2,17 +2,17 @@ import {BoardType} from '@prisma/client'
 import moment from 'moment'
 import Head from 'next/head'
 import {useRouter} from 'next/router'
-import {useEffect, useMemo, useState} from 'react'
-import {QueryClient, useQueryClient} from 'react-query'
+import {useEffect, useState} from 'react'
+import {useQueryClient} from 'react-query'
 import {toast} from 'react-toastify'
 import useBoardById from '../../../api/query/board/useBoardById'
-import useCommentHistory from '../../../api/query/board/useCommentHistory'
 import useCommentList from '../../../api/query/board/useCommentList'
 import retrospectiveService from '../../../api/request/retrospective'
 import JoinBoardForm from '../../../components/forms/JoinBoardForm'
 import NormalInput from '../../../components/NormalInput'
 import {useSocket} from '../../../contexts/socket'
-import {useForceUpdate} from '../../../hooks/useForceUpdate'
+import useSlide from '../../../hooks/animation/useSlide'
+import {a, useTransition} from '@react-spring/web'
 
 const HistoryByIdPage = () => {
   const queryClient = useQueryClient()
@@ -34,7 +34,22 @@ const HistoryByIdPage = () => {
     comment: string
   } | null>(null)
 
+  const commentTransition = useTransition(
+    retroItemList?.retroItem.filter((item: any) => item.type === filterType),
+    {
+      from: {opacity: 0, x: 100},
+      enter: {opacity: 1, x: 0},
+      trail: 100,
+    }
+  )
+
   const {socket}: any = useSocket()
+  const slideUp = useSlide({
+    fromY: 100,
+    toY: 0,
+    customFrom: {opacity: 0},
+    customTo: {opacity: 1},
+  })
 
   useEffect(() => {
     if (socket) {
@@ -92,7 +107,10 @@ const HistoryByIdPage = () => {
       <Head>
         <title>Retro Board History - Retrospective creator</title>
       </Head>
-      <main className="bg-slate-100 dark:bg-slate-800 flex flex-col gap-3 max-w-4xl mt-52 lg:mt-28 mx-auto p-4 rounded-2xl duration-150 dark:text-white">
+      <a.main
+        style={slideUp}
+        className="bg-slate-100 dark:bg-slate-800 flex flex-col gap-3 max-w-4xl mt-52 lg:mt-28 mx-auto p-4 rounded-2xl duration-150 dark:text-white"
+      >
         <h1 className="text-2xl md:w-3/4 break-words font-semibold">
           {boardInfo?.retroBoard.title}
         </h1>
@@ -108,11 +126,11 @@ const HistoryByIdPage = () => {
             <div className="flex gap-2">
               <div>Board Status</div>{' '}
               {boardInfo?.retroBoard.opening ? (
-                <div className="text-lg dark:bg-slate-900 px-3 rounded-lg bg-green-600 text-white">
+                <div className="text-lg px-3 rounded-lg bg-green-600 text-white">
                   OPENING
                 </div>
               ) : (
-                <div className="text-lg dark:bg-slate-900 px-3 rounded-lg bg-red-600 text-white">
+                <div className="text-lg px-3 rounded-lg bg-red-600 text-white">
                   CLOSED
                 </div>
               )}
@@ -176,56 +194,55 @@ const HistoryByIdPage = () => {
               </thead>
               <tbody>
                 {retroItemList &&
-                  retroItemList.retroItem
-                    .filter((item: any) => item.type === filterType)
-                    .map((item: any) => (
-                      <tr
-                        key={item.id}
-                        className="flex flex-col gap-1 md:table-row border-solid border-slate-200 dark:border-slate-700 border-b-2"
-                      >
-                        {!boardInfo?.retroBoard.anonymous && (
-                          <td className="w-full md:w-1/3 py-2">
-                            <span className="md:hidden text-xl font-bold text-red-600 mr-2">
-                              Sender:
-                            </span>
-                            {item.sender.email ?? 'Secret'}
-                          </td>
-                        )}
-                        <td
-                          className={` w-full
-                          ${
-                            boardInfo?.retroBoard.anonymous
-                              ? 'md:w-1/2'
-                              : 'md:w-1/3'
-                          } py-2 tracking-wider
-                        `}
-                        >
-                          <span className="md:hidden text-xl font-bold text-red-600 mr-2">
-                            Content:
-                          </span>{' '}
-                          {item.content}
-                        </td>
+                  commentTransition((props, item) => (
+                    <a.tr
+                      style={props}
+                      key={item.id}
+                      className="flex flex-col gap-1 md:table-row border-solid border-slate-200 dark:border-slate-700 border-b-2"
+                    >
+                      {!boardInfo?.retroBoard.anonymous && (
                         <td className="w-full md:w-1/3 py-2">
-                          <NormalInput
-                            type="text"
-                            placeHolder="comment..."
-                            onChange={(e) => {
-                              setCommentingItem({
-                                id: item.id,
-                                comment: e.target.value,
-                              })
-                            }}
-                            size="sm"
-                            defaultValue={item.comment ?? ''}
-                          />
+                          <span className="md:hidden text-xl font-bold text-red-600 mr-2">
+                            Sender:
+                          </span>
+                          {item.sender.email ?? 'Secret'}
                         </td>
-                      </tr>
-                    ))}
+                      )}
+                      <td
+                        className={` w-full
+                              ${
+                                boardInfo?.retroBoard.anonymous
+                                  ? 'md:w-1/2'
+                                  : 'md:w-1/3'
+                              } py-2 tracking-wider
+                            `}
+                      >
+                        <span className="md:hidden text-xl font-bold text-red-600 mr-2">
+                          Content:
+                        </span>{' '}
+                        {item.content}
+                      </td>
+                      <td className="w-full md:w-1/3 py-2">
+                        <NormalInput
+                          type="text"
+                          placeHolder="comment..."
+                          onChange={(e) => {
+                            setCommentingItem({
+                              id: item.id,
+                              comment: e.target.value,
+                            })
+                          }}
+                          size="sm"
+                          defaultValue={item.comment ?? ''}
+                        />
+                      </td>
+                    </a.tr>
+                  ))}
               </tbody>
             </table>
           </div>
         </section>
-      </main>
+      </a.main>
     </>
   )
 }

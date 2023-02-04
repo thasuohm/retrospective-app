@@ -10,6 +10,9 @@ import useUserChangeTeam from '../api/query/user/useUserChangeTeam'
 import {useSession} from 'next-auth/react'
 import useUser from '../api/query/user/useUser'
 import {Team} from '@prisma/client'
+import {a} from '@react-spring/web'
+import useBooping from '../hooks/animation/useBooping'
+import useFade from '../hooks/animation/useFade'
 
 export default function Home() {
   const {data: teams} = useTeamList()
@@ -17,6 +20,8 @@ export default function Home() {
   const {data: session} = useSession()
   const {data: user} = useUser(session ? true : false)
   const {mutate: userChangeTeam} = useUserChangeTeam()
+  const booping = useBooping({})
+  const fade = useFade({})
 
   const [selectedTeam, setSelectedTeam] = useState<ReactSelectState | null>(
     null
@@ -64,31 +69,38 @@ export default function Home() {
       </Head>
       <main className="flex flex-col gap-4 max-w-3xl justify-center mx-auto h-screen px-3 lg:px-0">
         <div className="p-4 flex flex-col gap-4 justify-center rounded-lg">
-          <h1 className="font-semibold font-sanam-deklen tracking-widest text-2xl text-center dark:text-white">
-            Choose your Team
-          </h1>
+          <a.div style={fade}>
+            <h1 className="font-semibold font-sanam-deklen tracking-widest text-2xl text-center dark:text-white">
+              Choose your Team
+            </h1>{' '}
+          </a.div>
 
-          {((teamListOption && !user?.teamId) ||
-            (teamListOption && selectedTeam)) && (
-            <Select
-              id="team-select"
-              defaultValue={selectedTeam}
-              onChange={setSelectedTeam}
-              options={teamListOption}
-              instanceId="team-select"
-            />
-          )}
+          <a.div style={booping}>
+            {((teamListOption && !user?.teamId) ||
+              (teamListOption && selectedTeam)) && (
+              <Select
+                id="team-select"
+                defaultValue={selectedTeam}
+                onChange={setSelectedTeam}
+                options={teamListOption}
+                instanceId="team-select"
+              />
+            )}
+          </a.div>
 
-          <Button
-            type="button"
-            style="primary"
-            size="sm"
-            onClick={searchRetroList}
-          >
-            <b className="font-semibold font-sanam-deklen tracking-widest text-2xl px-12">
-              Search
-            </b>
-          </Button>
+          <a.div style={booping}>
+            <Button
+              type="button"
+              style="primary"
+              size="sm"
+              onClick={searchRetroList}
+              customStyle="w-full"
+            >
+              <b className="font-semibold font-sanam-deklen tracking-widest text-2xl px-12 w-full">
+                Search
+              </b>
+            </Button>
+          </a.div>
         </div>
       </main>
     </>

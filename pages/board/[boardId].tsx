@@ -26,6 +26,10 @@ import JoinBoardForm from '../../components/forms/JoinBoardForm'
 import {useSocket} from '../../contexts/socket'
 import {useQueryClient} from 'react-query'
 import LinkButton from '../../components/LinkButton'
+import useBooping from '../../hooks/animation/useBooping'
+import {a, useSpring} from '@react-spring/web'
+import useSlide from '../../hooks/animation/useSlide'
+import useFade from '../../hooks/animation/useFade'
 
 const BoardPage = () => {
   const router = useRouter()
@@ -53,6 +57,19 @@ const BoardPage = () => {
   const {mutate: closeBoard} = useCloseBoard()
   const queryClient = useQueryClient()
   const {socket}: any = useSocket()
+  const booping = useBooping({})
+  const boopingTimer = useBooping({
+    fromScale: 1.3,
+    customProps: {loop: !timeOut ? true : false, config: {duration: 1000}},
+  })
+  const fade = useFade({})
+
+  const slideUp = useSlide({
+    fromY: 100,
+    toY: 0,
+    customFrom: {opacity: 0},
+    customTo: {opacity: 1},
+  })
 
   useEffect(() => {
     if (teams && boardInfo?.retroBoard.teamId && boardInfo?.isOwner) {
@@ -158,22 +175,29 @@ const BoardPage = () => {
       <Head>
         <title>{pageTitle}</title>
       </Head>
-      {closeBoardModal && (
-        <ConfirmModal
-          head="Close Board~"
-          onSubmit={closeBoardSubmit}
-          onCancel={() => {
-            setCloseBoardModal(false)
-          }}
+
+      <ConfirmModal
+        head="Close Board~"
+        onShow={closeBoardModal}
+        onSubmit={closeBoardSubmit}
+        onCancel={() => {
+          setCloseBoardModal(false)
+        }}
+      >
+        Are you sure to Close this Board ? <br />
+        <span className="text-red-600">
+          *Other people will unable to send more comment
+        </span>
+      </ConfirmModal>
+
+      <a.main
+        style={slideUp}
+        className="bg-slate-100 dark:bg-slate-800 flex flex-col gap-3 max-w-3xl mt-52 lg:mt-28 mx-auto p-4 rounded-2xl duration-150 dark:text-white"
+      >
+        <a.header
+          style={booping}
+          className="flex flex-col md:flex-row justify-between gap-2"
         >
-          Are you sure to Close this Board ? <br />
-          <span className="text-red-600">
-            *Other people will unable to send more comment
-          </span>
-        </ConfirmModal>
-      )}
-      <main className="bg-slate-100 dark:bg-slate-800 flex flex-col gap-3 max-w-3xl mt-52 lg:mt-28 mx-auto p-4 rounded-2xl duration-150 dark:text-white">
-        <header className="flex flex-col md:flex-row justify-between gap-2">
           <h1 className="text-2xl md:w-3/4 break-words font-semibold">
             {boardInfo?.retroBoard.title}
           </h1>
@@ -182,21 +206,23 @@ const BoardPage = () => {
               <div className="w-1/2">time left</div>{' '}
               <div
                 className={`text-lg font-bold  text-white px-2 rounded-lg w-1/2 text-center ${
-                  !timeOut ? 'bg-green-400' : 'bg-red-600 '
+                  !timeOut ? 'bg-green-600' : 'bg-red-600 '
                 }`}
               >
-                {!timeOut ? timer : 'TimeOut'}
+                <a.div style={boopingTimer}>
+                  {!timeOut ? timer : 'TimeOut'}
+                </a.div>
               </div>
             </div>
             <div className="flex gap-1 items-center">
               <div className="w-1/2">total item</div>{' '}
               <div className="text-lg bg-slate-300 dark:bg-slate-900 px-2 rounded-lg w-1/2 text-center">
-                {boardInfo?.retroItemCount}
+                {boardInfo?.retroItemCount ?? 0}
               </div>
             </div>
           </div>
-        </header>
-        <section className="flex flex-col gap-2 font-semibold">
+        </a.header>
+        <a.section style={fade} className="flex flex-col gap-2 font-semibold">
           <div className="flex flex-wrap gap-2 items-center">
             <div className="flex gap-2">
               <div>Creator</div>{' '}
@@ -207,11 +233,11 @@ const BoardPage = () => {
             <div className="flex gap-2">
               <div>Board Status</div>{' '}
               {boardInfo?.retroBoard.opening ? (
-                <div className="text-lg dark:bg-slate-900 px-3 rounded-lg bg-green-600 text-white">
+                <div className="text-lg px-3 rounded-lg bg-green-600 text-white">
                   OPENING
                 </div>
               ) : (
-                <div className="text-lg dark:bg-slate-900 px-3 rounded-lg bg-red-600 text-white">
+                <div className="text-lg px-3 rounded-lg bg-red-600 text-white">
                   CLOSED
                 </div>
               )}
@@ -278,9 +304,10 @@ const BoardPage = () => {
               </div>
             </div>
           )}
-        </section>
+        </a.section>
 
-        <form
+        <a.form
+          style={fade}
           onSubmit={handleSubmit(submitForm)}
           className="flex flex-col gap-3 font-semibold mt-8"
         >
@@ -344,8 +371,8 @@ const BoardPage = () => {
               </LinkButton>
             )}
           </div>
-        </form>
-      </main>
+        </a.form>
+      </a.main>
     </>
   )
 }

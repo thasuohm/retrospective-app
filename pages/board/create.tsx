@@ -14,8 +14,12 @@ import Button from '../../components/Button'
 import Input from '../../components/Input'
 import ConfirmModal from '../../components/Modal/ConfirmModal'
 import {useSocket} from '../../contexts/socket'
+import useFade from '../../hooks/animation/useFade'
 import {ReactSelectState} from '../../types/components'
 import {RetroBoardCreate} from '../../types/request'
+import {a} from '@react-spring/web'
+import useSlide from '../../hooks/animation/useSlide'
+import useBooping from '../../hooks/animation/useBooping'
 
 const CreateRetroPage = () => {
   const {
@@ -34,6 +38,15 @@ const CreateRetroPage = () => {
   const {data: teams} = useTeamList()
   const {mutate: createBoard, isSuccess} = useCreateBoard()
   const {socket}: any = useSocket()
+  const slideUp = useSlide({
+    fromY: 100,
+    toY: 0,
+    customFrom: {opacity: 0},
+    customTo: {opacity: 1},
+  })
+  const booping = useBooping({})
+  const fade = useFade({})
+  
 
   useEffect(() => {
     if (user && teams) {
@@ -86,27 +99,37 @@ const CreateRetroPage = () => {
       <Head>
         <title>Create new Board</title>
       </Head>
-      {createBoardModal && (
-        <ConfirmModal
-          head="Close Board~"
-          onSubmit={handleSubmit(createBoardSubmit)}
-          onCancel={() => {
-            setCreateBoardModal(false)
-          }}
-        >
-          <>
-            Are you sure to Create this Board ? <br />
-          </>
-        </ConfirmModal>
-      )}
-      <main className="bg-slate-100 dark:bg-slate-800 flex flex-col gap-3 max-w-3xl mt-52 lg:mt-28 mx-auto p-4 rounded-2xl duration-150 dark:text-white">
+
+      <ConfirmModal
+        onShow={createBoardModal}
+        head="Create Board~"
+        onSubmit={handleSubmit(createBoardSubmit)}
+        onCancel={() => {
+          setCreateBoardModal(false)
+        }}
+      >
+        <>
+          Are you sure to Create this Board ? <br />
+        </>
+      </ConfirmModal>
+
+      <a.main
+        style={slideUp}
+        className="bg-slate-100 dark:bg-slate-800 flex flex-col gap-3 max-w-3xl mt-52 lg:mt-28 mx-auto p-4 rounded-2xl duration-150 dark:text-white"
+      >
         <header className="flex flex-col md:flex-row justify-between gap-2">
-          <h1 className="text-2xl md:w-3/4 break-words font-semibold">
+          <a.h1
+            style={booping}
+            className="text-2xl md:w-3/4 break-words font-semibold"
+          >
             Creating new Board..
-          </h1>
+          </a.h1>
         </header>
 
-        <form className="flex flex-col  gap-2 items-start   mt-6 p-3 bg-slate-300 dark:bg-slate-700 rounded-md">
+        <a.form
+          style={fade}
+          className="flex flex-col gap-2 items-start   mt-6 p-3 bg-slate-300 dark:bg-slate-700 rounded-md"
+        >
           <Input
             label="Title*"
             type="text"
@@ -175,8 +198,8 @@ const CreateRetroPage = () => {
           >
             Create Board
           </Button>
-        </form>
-      </main>
+        </a.form>
+      </a.main>
     </>
   )
 }
