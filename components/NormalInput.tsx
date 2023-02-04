@@ -1,7 +1,7 @@
 type InputProps = {
   id?: string
   label?: string
-  onChange: (e) => void
+  onChange: (e: any) => void
   type: string
   placeHolder?: string
   isDisabled?: boolean

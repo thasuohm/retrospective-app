@@ -16,6 +16,7 @@ type InputProps = {
   customInputStyle?: string
   errorMessage?: string
   defaultChecked?: boolean
+  maxLength?: number
 }
 
 const Input: React.FC<InputProps> = (props) => {
@@ -35,6 +36,7 @@ const Input: React.FC<InputProps> = (props) => {
     customInputStyle,
     errorMessage,
     defaultChecked,
+    maxLength,
   } = props
 
   const switchSize = () => {
@@ -66,6 +68,7 @@ const Input: React.FC<InputProps> = (props) => {
         autoComplete={autoComplete}
         defaultValue={defaultValues}
         defaultChecked={defaultChecked}
+        maxLength={maxLength}
       />
       {type === 'checkbox' && label}
       {errorMessage && (

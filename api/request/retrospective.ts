@@ -30,7 +30,7 @@ const getClosedRetroBoardByTeam = ({
   page: number
 }) => {
   return axios.get('/board/team/' + teamId, {
-    params: {opening: false, year, month, page},
+    params: {opening: false, year, month, page, order: 'desc'},
   })
 }
 

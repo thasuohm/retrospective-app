@@ -11,7 +11,7 @@ export default async function handler(
     return res.status(405).send('Only Get requests allowed')
   }
 
-  let {id, opening, month, year, page} = req.query
+  let {id, opening, month, year, page, order} = req.query
 
   if (!id) {
     res.status(500).json('No team in query')
@@ -50,6 +50,11 @@ export default async function handler(
       },
       team: true,
     },
+    orderBy: [
+      {
+        id: order === 'asc' ? 'asc' : 'desc',
+      },
+    ],
   })
 
   const retroBoardCount = await prisma.retroBoard.aggregate({

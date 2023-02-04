@@ -61,7 +61,7 @@ const Button: React.FC<ButtonProps> = (props) => {
       id={id}
       type={type}
       className={`${styleSwitch()} ${sizeSwitch()} ${customStyle} hover:opacity-80 duration-150 ${
-        isDisabled && 'opacity-80'
+        isDisabled ? 'opacity-80' : ''
       }`}
       disabled={isDisabled}
       onClick={onClick}

@@ -46,7 +46,6 @@ const CreateRetroPage = () => {
   })
   const booping = useBooping({})
   const fade = useFade({})
-  
 
   useEffect(() => {
     if (user && teams) {
@@ -135,7 +134,8 @@ const CreateRetroPage = () => {
             type="text"
             placeHolder="board title..."
             register={register}
-            registerCustom={{require: true}}
+            registerCustom={{require: true, maxLength: 100}}
+            maxLength={80}
             registerLabel="title"
             customStyle="w-full"
             errorMessage={errors?.title?.message?.toString()}
