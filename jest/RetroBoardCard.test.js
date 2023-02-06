@@ -1,8 +1,18 @@
 import RetroBoardCard from '../components/cards/RetroBoardCard'
 import {render} from '@testing-library/react'
 import React from 'react'
+import {useSession} from 'next-auth/react'
+jest.mock('next-auth/react')
 
 jest.mock('next/router', () => require('next-router-mock'))
+
+beforeEach(() => {
+  const mockSession = {
+    expires: new Date(Date.now() + 2 * 86400).toISOString(),
+    user: {username: 'admin'},
+  }
+  useSession.mockReturnValueOnce([mockSession, false])
+})
 
 const boardInfo = [
   {
