@@ -1,23 +1,22 @@
-import {RetroBoard, Team} from '@prisma/client'
-import {GetServerSideProps} from 'next'
+import { RetroBoard, Team } from '@prisma/client'
+import { GetServerSideProps } from 'next'
 import Head from 'next/head'
-import {useRouter} from 'next/router'
+import { useRouter } from 'next/router'
 import useClosedBoardByTeam from '../../api/query/board/useClosedBoardByTeam'
 import Button from '../../components/Button'
 import RetroBoardCard from '../../components/cards/RetroBoardCard'
 import NotFoundBox from '../../components/NotFoundBox'
-import {monthsArrObj} from '../../config/months'
+import { monthsArrObj } from '../../config/months'
 import prisma from '../../prisma'
 import Select from 'react-select'
-import moment from 'moment'
-import {useState} from 'react'
-import {ReactSelectState} from '../../types/components'
-import {dehydrate, QueryClient} from 'react-query'
+import { useState } from 'react'
+import { ReactSelectState } from '../../types/components'
+import { dehydrate, QueryClient } from 'react-query'
 import retrospectiveService from '../../api/request/retrospective'
 import useSlide from '../../hooks/animation/useSlide'
-import {a, useTransition} from '@react-spring/web'
+import { a, useTransition } from '@react-spring/web'
 import useBooping from '../../hooks/animation/useBooping'
-import {currentYear, yearArrObject} from '../../config/years'
+import { currentYear, yearArrObject } from '../../config/years'
 
 const RetroListPage = (props: {
   teamId: string
@@ -26,36 +25,36 @@ const RetroListPage = (props: {
   page: number
   teamInfo: Team
 }) => {
-  const {teamId, year, month, page, teamInfo} = props
+  const { teamId, year, month, page, teamInfo } = props
   const slideUp = useSlide({
     fromY: 100,
     toY: 0,
-    customFrom: {opacity: 0},
-    customTo: {opacity: 1},
+    customFrom: { opacity: 0 },
+    customTo: { opacity: 1 },
   })
   const router = useRouter()
-  const {data: boardList} = useClosedBoardByTeam(teamId, year, month, page)
+  const { data: boardList } = useClosedBoardByTeam(teamId, year, month, page)
 
   const [selectedMonth, setSelectedMonth] = useState<ReactSelectState | null>({
-    label: 'month...',
-    value: '',
+    label: month ?? 'month...',
+    value: month ?? '',
   })
 
   const [selectedYear, setSelectedYear] = useState<ReactSelectState | null>({
-    label: 'year...',
-    value: '',
+    label: year ?? 'year...',
+    value: year ?? '',
   })
 
   const cardTransition = useTransition(boardList?.retroBoard, {
-    from: {opacity: 0, y: 100},
-    enter: {opacity: 1, y: 0},
+    from: { opacity: 0, y: 100 },
+    enter: { opacity: 1, y: 0 },
     trail: 100,
   })
   const slideIn = useSlide({
     fromY: 50,
     toY: 0,
-    customFrom: {opacity: 0},
-    customTo: {opacity: 1},
+    customFrom: { opacity: 0 },
+    customTo: { opacity: 1 },
   })
   const booping = useBooping({})
 
@@ -63,11 +62,11 @@ const RetroListPage = (props: {
     return <p>Loading...</p>
   }
 
-  const {name, description} = teamInfo
+  const { name, description } = teamInfo
 
-  const monthsArrObjSelect = [{value: '', label: 'month...'}, ...monthsArrObj]
+  const monthsArrObjSelect = [{ value: '', label: 'month...' }, ...monthsArrObj]
 
-  const yearsArrObjSelect = [{value: '', label: 'year...'}, ...yearArrObject]
+  const yearsArrObjSelect = [{ value: '', label: 'year...' }, ...yearArrObject]
 
   const filterBoard = () => {
     router.push(
@@ -83,7 +82,7 @@ const RetroListPage = (props: {
         }`,
       },
       undefined,
-      {shallow: false}
+      { shallow: false }
     )
   }
 
@@ -94,16 +93,13 @@ const RetroListPage = (props: {
       </Head>
       <a.main
         style={slideUp}
-        className="bg-slate-100 dark:bg-slate-800 flex flex-col gap-3 max-w-3xl mt-52 lg:mt-28 mx-auto p-4 rounded-2xl duration-150 dark:text-white"
-      >
+        className="bg-slate-100 dark:bg-slate-800 flex flex-col gap-3 max-w-3xl mt-52 lg:mt-28 mx-auto p-4 rounded-2xl duration-150 dark:text-white">
         <a.div
           style={slideIn}
-          className=" flex flex-col gap-2 justify-center rounded-lg"
-        >
+          className=" flex flex-col gap-2 justify-center rounded-lg">
           <a.h1
             style={booping}
-            className="font-semibold font-sanam-deklen tracking-widest text-2xl text-center "
-          >
+            className="font-semibold font-sanam-deklen tracking-widest text-2xl text-center ">
             Closed Board From {name} Team
           </a.h1>
           <span className="font-semibold text-lg tracking-widest break-all">
@@ -130,7 +126,7 @@ const RetroListPage = (props: {
                 className="text-black w-1/2"
                 placeholder="year..."
                 defaultValue={
-                  {label: year, value: year} ?? {
+                  { label: year, value: year } ?? {
                     label: currentYear,
                     value: currentYear,
                   }
@@ -142,8 +138,7 @@ const RetroListPage = (props: {
               onClick={filterBoard}
               size="md"
               style="primary"
-              applyDark={true}
-            >
+              applyDark={true}>
               Filter Board
             </Button>
           </form>
@@ -162,8 +157,7 @@ const RetroListPage = (props: {
               <a.div
                 style={props}
                 key={item?.id}
-                className="w-full sm:w-[calc(50%-1rem)] md:w-[calc(33%-0.55rem)]"
-              >
+                className="w-full sm:w-[calc(50%-1rem)] md:w-[calc(33%-0.55rem)]">
                 <RetroBoardCard retroBoard={item} />
               </a.div>
             ))}
@@ -189,7 +183,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
 
   await queryClient.prefetchQuery('get-close-board-by-team', () =>
     retrospectiveService
-      .getClosedRetroBoardByTeam({teamId, month, year, page})
+      .getClosedRetroBoardByTeam({ teamId, month, year, page })
       .then((res) => {
         return {
           retroBoard: res.data.retroBoard as RetroBoard[],
@@ -199,7 +193,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
   )
 
   const teamInfo = await prisma.team.findUnique({
-    where: {id: teamId?.toString()},
+    where: { id: teamId?.toString() },
   })
 
   if (!teamInfo) {
