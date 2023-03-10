@@ -1,44 +1,45 @@
-import {BoardType, Team} from '@prisma/client'
-import {GetServerSideProps} from 'next'
+import { BoardType, Team } from '@prisma/client'
+import { GetServerSideProps } from 'next'
 import Head from 'next/head'
-import {useEffect, useMemo, useState} from 'react'
-import {useForm} from 'react-hook-form'
-import {toast} from 'react-toastify'
+import { useEffect, useMemo, useState } from 'react'
+import { useForm } from 'react-hook-form'
+import { toast } from 'react-toastify'
 import useBoardById from '../../api/query/board/useBoardById'
 import useSendBoard from '../../api/query/board/useSendBoard'
 import useTeamList from '../../api/query/team/useTeamList'
 import useUser from '../../api/query/user/useUser'
 import Button from '../../components/Button'
 import Input from '../../components/Input'
-import {RetroItemCreate} from '../../types/request'
+import { RetroItemCreate } from '../../types/request'
 import Select from 'react-select'
-import {ReactSelectState} from '../../types/components'
-import {useSession} from 'next-auth/react'
+import { ReactSelectState } from '../../types/components'
+import { useSession } from 'next-auth/react'
 import useUpdateBoard from '../../api/query/board/useUpdateBoard'
 import moment from 'moment'
-import {useRouter} from 'next/router'
-import {unstable_getServerSession} from 'next-auth'
-import {authOptions} from '../api/auth/[...nextauth]'
+import { useRouter } from 'next/router'
+import { unstable_getServerSession } from 'next-auth'
+import { authOptions } from '../api/auth/[...nextauth]'
 import useTimer from '../../hooks/useTimer'
 import ConfirmModal from '../../components/Modal/ConfirmModal'
 import useCloseBoard from '../../api/query/board/useCloseBoard'
 import JoinBoardForm from '../../components/forms/JoinBoardForm'
-import {useSocket} from '../../contexts/socket'
-import {useQueryClient} from 'react-query'
+import { useSocket } from '../../contexts/socket'
+import { useQueryClient } from 'react-query'
 import LinkButton from '../../components/LinkButton'
 import useBooping from '../../hooks/animation/useBooping'
-import {a, useSpring} from '@react-spring/web'
+import { a } from '@react-spring/web'
 import useSlide from '../../hooks/animation/useSlide'
 import useFade from '../../hooks/animation/useFade'
+import { isValidObjectId } from '../../utils/validate'
 
 const BoardPage = () => {
   const router = useRouter()
-  const {boardId} = router.query
+  const { boardId } = router.query
 
-  const {data: session} = useSession()
+  const { data: session } = useSession()
 
-  const {register, handleSubmit, reset} = useForm()
-  const {data: user} = useUser(session ? true : false)
+  const { register, handleSubmit, reset } = useForm()
+  const { data: user } = useUser(session ? true : false)
   const {
     data: boardInfo,
     isLoading: isLoadingBoard,
@@ -46,29 +47,29 @@ const BoardPage = () => {
     error: boardError,
   } = useBoardById(boardId ? boardId?.toString() : '')
 
-  const {mutate: sendBoard} = useSendBoard()
-  const {data: teams} = useTeamList()
-  const {mutate: updateBoard} = useUpdateBoard()
-  const {register: ownerRegister, handleSubmit: ownerHandleSubmit} =
+  const { mutate: sendBoard } = useSendBoard()
+  const { data: teams } = useTeamList()
+  const { mutate: updateBoard } = useUpdateBoard()
+  const { register: ownerRegister, handleSubmit: ownerHandleSubmit } =
     useForm<any>()
   const [selectedTeam, setSelectedTeam] = useState<ReactSelectState | null>()
-  const {timer, timeOut} = useTimer(boardInfo ? boardInfo!.timeLeft : 0)
+  const { timer, timeOut } = useTimer(boardInfo ? boardInfo!.timeLeft : 0)
   const [closeBoardModal, setCloseBoardModal] = useState<boolean>(false)
-  const {mutate: closeBoard} = useCloseBoard()
+  const { mutate: closeBoard } = useCloseBoard()
   const queryClient = useQueryClient()
-  const {socket}: any = useSocket()
+  const { socket }: any = useSocket()
   const booping = useBooping({})
   const boopingTimer = useBooping({
     fromScale: 1.3,
-    customProps: {loop: !timeOut ? true : false, config: {duration: 1000}},
+    customProps: { loop: !timeOut ? true : false, config: { duration: 1000 } },
   })
   const fade = useFade({})
 
   const slideUp = useSlide({
     fromY: 100,
     toY: 0,
-    customFrom: {opacity: 0},
-    customTo: {opacity: 1},
+    customFrom: { opacity: 0 },
+    customTo: { opacity: 1 },
   })
 
   useEffect(() => {
@@ -78,7 +79,7 @@ const BoardPage = () => {
       )
 
       if (team) {
-        setSelectedTeam({value: team.id, label: team.name})
+        setSelectedTeam({ value: team.id, label: team.name })
       }
     }
   }, [teams, boardInfo?.retroBoard.teamId, boardInfo?.isOwner])
@@ -87,7 +88,13 @@ const BoardPage = () => {
     if (socket) {
       socket.on(
         'boardUpdate',
-        ({boardId: boardSocket, alert}: {boardId: string; alert?: boolean}) => {
+        ({
+          boardId: boardSocket,
+          alert,
+        }: {
+          boardId: string
+          alert?: boolean
+        }) => {
           if (boardSocket === boardId) {
             queryClient.invalidateQueries('get-board-by-id')
             if (alert) {
@@ -107,7 +114,7 @@ const BoardPage = () => {
   const teamListOption = useMemo(() => {
     if (boardInfo?.isOwner) {
       return teams?.map((item: Team) => {
-        return {value: item.id, label: item.name}
+        return { value: item.id, label: item.name }
       })
     }
   }, [boardInfo?.isOwner, teams])
@@ -119,6 +126,10 @@ const BoardPage = () => {
   if (isBoardError && boardError.response) {
     if (boardError.response.status === 401) {
       return <JoinBoardForm boardId={boardId ? boardId?.toString() : ''} />
+    }
+
+    if (boardError.response.status === 500) {
+      return router.push('/notFound')
     }
   }
 
@@ -141,19 +152,19 @@ const BoardPage = () => {
     })
 
     if (retroItemList.length > 0) {
-      sendBoard({boardId: boardId ? boardId?.toString() : '', retroItemList})
+      sendBoard({ boardId: boardId ? boardId?.toString() : '', retroItemList })
     } else {
       toast.error('Please add some of your comment')
     }
     reset()
   }
 
-  const submitUpdate = (data: {endDate: string; password: string}) => {
-    const {endDate, password} = data
+  const submitUpdate = (data: { endDate: string; password: string }) => {
+    const { endDate, password } = data
 
     updateBoard({
       boardId: boardId ? boardId?.toString() : '',
-      boardInfo: {endDate, password, teamId: selectedTeam!.value},
+      boardInfo: { endDate, password, teamId: selectedTeam!.value },
     })
   }
 
@@ -182,8 +193,7 @@ const BoardPage = () => {
         onSubmit={closeBoardSubmit}
         onCancel={() => {
           setCloseBoardModal(false)
-        }}
-      >
+        }}>
         Are you sure to Close this Board ? <br />
         <span className="text-red-600">
           *Other people will unable to send more comment
@@ -192,12 +202,10 @@ const BoardPage = () => {
 
       <a.main
         style={slideUp}
-        className="bg-slate-100 dark:bg-slate-800 flex flex-col gap-3 max-w-3xl mt-52 lg:mt-28 mx-auto p-4 rounded-2xl duration-150 dark:text-white"
-      >
+        className="bg-slate-100 dark:bg-slate-800 flex flex-col gap-3 max-w-3xl mt-52 lg:mt-28 mx-auto p-4 rounded-2xl duration-150 dark:text-white">
         <a.header
           style={booping}
-          className="flex flex-col md:flex-row justify-between gap-2"
-        >
+          className="flex flex-col md:flex-row justify-between gap-2">
           <h1 className="text-2xl md:w-3/4 break-words font-semibold">
             {boardInfo?.retroBoard.title}
           </h1>
@@ -207,8 +215,7 @@ const BoardPage = () => {
               <div
                 className={`text-lg font-bold  text-white px-2 rounded-lg w-1/2 text-center ${
                   !timeOut ? 'bg-green-600' : 'bg-red-600 '
-                }`}
-              >
+                }`}>
                 <a.div style={boopingTimer}>
                   {!timeOut ? timer : 'TimeOut'}
                 </a.div>
@@ -246,8 +253,7 @@ const BoardPage = () => {
           {boardInfo?.isOwner ? (
             <form
               onSubmit={ownerHandleSubmit(submitUpdate)}
-              className="flex flex-col md:flex-row flex-wrap gap-2 items-start md:items-end mt-6 p-3 bg-slate-300 dark:bg-slate-700 rounded-md"
-            >
+              className="flex flex-col md:flex-row flex-wrap gap-2 items-start md:items-end mt-6 p-3 bg-slate-300 dark:bg-slate-700 rounded-md">
               <h3 className="text-lg font-semibold">Update your Board here</h3>
               <div className="w-full">Team</div>
               {selectedTeam && (
@@ -309,8 +315,7 @@ const BoardPage = () => {
         <a.form
           style={fade}
           onSubmit={handleSubmit(submitForm)}
-          className="flex flex-col gap-3 font-semibold mt-8"
-        >
+          className="flex flex-col gap-3 font-semibold mt-8">
           <Input
             label="Good :)"
             type="text"
@@ -343,8 +348,7 @@ const BoardPage = () => {
                 customStyle="font-semibold mt-12 w-full"
                 applyDark={true}
                 isDisabled={!boardInfo.retroBoard.opening}
-                onClick={() => setCloseBoardModal(true)}
-              >
+                onClick={() => setCloseBoardModal(true)}>
                 Close Board
               </Button>
             )}
@@ -355,8 +359,7 @@ const BoardPage = () => {
                 size="md"
                 customStyle="font-semibold mt-12 w-full"
                 applyDark={true}
-                isDisabled={timeOut || !boardInfo.retroBoard.opening}
-              >
+                isDisabled={timeOut || !boardInfo.retroBoard.opening}>
                 Send It!
               </Button>
             ) : (
@@ -365,8 +368,7 @@ const BoardPage = () => {
                 style="primary"
                 size="md"
                 customStyle="font-semibold mt-12 w-full"
-                applyDark={true}
-              >
+                applyDark={true}>
                 See Result!!
               </LinkButton>
             )}
@@ -380,6 +382,14 @@ const BoardPage = () => {
 export default BoardPage
 
 export const getServerSideProps: GetServerSideProps = async (context: any) => {
+  const { boardId } = context.query
+
+  if (!isValidObjectId(boardId)) {
+    return {
+      notFound: true,
+    }
+  }
+
   const session = await unstable_getServerSession(
     context.req,
     context.res,
